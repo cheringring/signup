@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 추가적인 스타일링 */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .alert {
+            margin-top: 20px;
+            display: none; /* 기본적으로 숨기기 */
+        }
+    </style>
+</head>
+<body>
+<!-- 네비게이션 바 시작 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">소곤소곤</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">홈</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">기능</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">가격</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">연락처</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="signup_form.html">회원가입</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- 네비게이션 바 끝 -->
+
+<div class="container">
+    <h1>로그인</h1>
+    <form id="loginForm">
+        <div class="form-group">
+            <label for="email">이메일(아이디)</label>
+            <input type="email" class="form-control" id="email" placeholder="이메일을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요" required>
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+    </form>
+    <!-- 알림 메시지 -->
+    <div class="alert alert-success" id="successMessage">로그인이 성공적으로 완료되었습니다.</div>
+    <div class="alert alert-danger" id="errorMessage">이메일 또는 비밀번호가 잘못되었습니다. 다시 시도하세요.</div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+
+        // 미리 정의된 이메일과 비밀번호
+        const correctEmail = 'user@example.com';
+        const correctPassword = 'password123';
+
+        // 사용자가 입력한 이메일과 비밀번호를 가져옵니다.
+        const enteredEmail = document.getElementById('email').value;
+        const enteredPassword = document.getElementById('password').value;
+
+        // 콘솔에 입력된 값 출력 (디버깅용)
+        console.log("입력된 이메일:", enteredEmail);
+        console.log("입력된 비밀번호:", enteredPassword);
+
+        // 이메일과 비밀번호가 일치하는지 확인합니다.
+        if (enteredEmail === correctEmail && enteredPassword === correctPassword) {
+            // 성공 메시지를 표시하고 실패 메시지는 숨깁니다.
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+        } else {
+            // 실패 메시지를 표시하고 성공 메시지는 숨깁니다.
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+        }
+    });
+</script>
+
+<!-- Bootstrap JS 및 의존성 -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 추가적인 스타일링 */
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<!-- 네비게이션 바 시작 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">소곤소곤</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="index.html">홈</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">기능</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">가격</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">연락처</a>
+            </li>
+        </ul>
+        <!-- 로그인 및 회원가입 버튼 추가 -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="login.html">로그인</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="signup_form.html">회원가입</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<!-- 네비게이션 바 끝 -->
+
+<div class="container">
+    <h1>회원가입</h1>
+    <form id="signupForm">
+        <div class="form-group">
+            <label for="username">사용자 이름</label>
+            <input type="text" class="form-control" id="username" placeholder="사용자 이름을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" class="form-control" id="email" placeholder="이메일을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요." required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">비밀번호 확인</label>
+            <input type="password" class="form-control" id="confirmPassword" placeholder="비밀번호를 다시 입력하세요" required>
+        </div>
+
+        <!-- 추가된 입력 필드들 -->
+        <div class="form-group">
+            <label for="gender">성별</label>
+            <select class="form-control" id="gender" required>
+                <option value="">성별을 선택하세요.</option>
+                <option value="man">남성</option>
+                <option value="woman">여성</option>
+                <option value="other">기타</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="addr">주소</label>
+            <input type="text" class="form-control" id="addr" placeholder="주소를 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="occupation">직업</label>
+            <input type="text" class="form-control" id="occupation" placeholder="직업을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="interest">흥미</label>
+            <input type="text" class="form-control" id="interest" placeholder="흥미를 입력하세요" required>
+        </div>
+        <!-- 추가된 입력 필드들 끝 -->
+
+        <button type="submit" class="btn btn-primary">회원가입</button>
+    </form>
+</div>
+
+<!-- JavaScript -->
+<script>
+    document.getElementById('signupForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 동작을 막습니다.
+
+        const form = document.getElementById('signupForm');
+        const formData = new FormData(form);
+
+        // 여기에서 폼 데이터를 처리하거나 서버에 전송할 수 있습니다.
+        // 예시로, 서버에 데이터를 보내는 fetch 요청을 추가합니다.
+        fetch('/api/signup', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 성공적으로 가입이 완료되면 인덱스 페이지로 리다이렉트하면서 URL에 회원가입 성공 파라미터를 추가합니다.
+                window.location.href = 'index.html?signup=true';
+            } else {
+                // 오류 처리 (예: 오류 메시지 표시)
+                alert('회원가입 실패: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('회원가입 중 오류가 발생했습니다.');
+        });
+    });
+</script>
+
+<!-- Bootstrap JS 및 의존성 -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
