@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+
 @RequiredArgsConstructor
 @Service
 public class UserService {
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final NaverApiService naverApiService;
@@ -31,9 +32,10 @@ public class UserService {
         user.setGender(form.getGender());
         user.setOccupation(form.getOccupation());
         user.setInterest(form.getInterest());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
-
 
 //    public void create(String userId, String username, String email, String password, String addr, String occupation, String interest, @NotEmpty(message = "취미는 필수항목입니다.") String userCreateFormInterest) {
 //        UserEntity user = UserEntity.builder()

@@ -23,7 +23,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false,unique = true)
-    private String User_ID;
+    private Long User_ID;
 
 
     @Column(nullable = false)

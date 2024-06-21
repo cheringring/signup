@@ -4,8 +4,6 @@ package com.example.signup.service;
 import com.example.signup.entity.UserEntity;
 import com.example.signup.entity.enum_.Gender;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +15,7 @@ import java.util.Map;
 
 @Service
 public class NaverApiService {
+
     @Value("${naver.api.client-id}")
     private String clientId;
 

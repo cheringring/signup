@@ -6,7 +6,6 @@ import com.example.signup.entity.UserEntity;
 import com.example.signup.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -55,48 +54,28 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "error"; // 에러를 보여줄 템플릿 이름
         }
+    }
 
-//    private final UserService userService;
-//    private final UserCreateForm userCreateForm;
-//
-//
-//    @GetMapping("/signup")
-//    public String signup(UserCreateForm userCreateForm) {
-//        return "signup_form";
-//    }
-//
-//    @PostMapping("/signup")
-//    public String signup(@Valid UserCreateForm userCreateForm, BindingResult bindingResult) {
-//        if (bindingResult.hasErrors()) {
-//            return "signup_form";
-//        }
-//
-//        if (!userCreateForm.getPassword().equals(userCreateForm.getConfirmPassword())) {
-//            bindingResult.rejectValue("password2", "passwordInCorrect",
-//                    "2개의 패스워드가 일치하지 않습니다.");
-//            return "signup_form";
-//        }
-//
-//        try {
-//            userService.create(
-//                    userCreateForm.getUserId(),
-//                    userCreateForm.getUsername(),
-//                    userCreateForm.getEmail(),
-//                    userCreateForm.getPassword(),
-//                    userCreateForm.getConfirmPassword(),
-//                    userCreateForm.getAddr(),
-//                    userCreateForm.getOccupation(),
-//                    userCreateForm.getInterest());
-//        } catch(DataIntegrityViolationException e) {
-//            e.printStackTrace();
-//            bindingResult.reject("signupFailed", "이미 등록된 사용자입니다.");
-//            return "signup_form";
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//            bindingResult.reject("signupFailed", e.getMessage());
-//            return "signup_form";
-//        }
-//
-//        return "redirect:/";
+    // 회원가입 페이지로 이동하는 메서드
+    @GetMapping("/signup")
+    public String showSignupForm(Model model) {
+        model.addAttribute("userCreateForm", new UserCreateForm());
+        return "signup_form"; // signup_form.html 뷰를 반환
+    }
+
+    // 회원가입 폼 데이터를 처리하는 메서드
+    @PostMapping("/signup")
+    public String signupUser(@Valid UserCreateForm form, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "signup_form";
+        }
+
+        try {
+            userService.createUser(form);
+            return "redirect:/login"; // 회원가입 성공 후 로그인 페이지로 리다이렉트
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "signup_form";
         }
     }
+}
