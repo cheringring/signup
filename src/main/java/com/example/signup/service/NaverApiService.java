@@ -15,7 +15,6 @@ import java.util.Map;
 
 @Service
 public class NaverApiService {
-
     @Value("${naver.api.client-id}")
     private String clientId;
 

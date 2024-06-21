@@ -37,6 +37,7 @@ public class UserService {
 
         userRepository.save(user);
 
+
 //    public void create(String userId, String username, String email, String password, String addr, String occupation, String interest, @NotEmpty(message = "취미는 필수항목입니다.") String userCreateFormInterest) {
 //        UserEntity user = UserEntity.builder()
 //                .User_ID(userId)

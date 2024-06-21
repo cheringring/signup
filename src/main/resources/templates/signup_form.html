@@ -7,7 +7,6 @@
     <!-- Bootstrap CSS CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* 추가적인 스타일링 */
         body {
             margin: 0;
             padding: 0;
@@ -18,7 +17,6 @@
     </style>
 </head>
 <body>
-<!-- 네비게이션 바 시작 -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">소곤소곤</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,18 +37,16 @@
                 <a class="nav-link" href="#">연락처</a>
             </li>
         </ul>
-        <!-- 로그인 및 회원가입 버튼 추가 -->
         <ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" href="login.html">로그인</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="signup.html">회원가입</a>
+                <a class="nav-link" href="signup_form.html">회원가입</a>
             </li>
         </ul>
     </div>
 </nav>
-<!-- 네비게이션 바 끝 -->
 
 <div class="container">
     <h1>회원가입</h1>
@@ -76,7 +72,6 @@
             <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="비밀번호를 다시 입력하세요" required>
         </div>
 
-        <!-- 추가된 입력 필드들 -->
         <div class="form-group">
             <label for="gender">성별</label>
             <select class="form-control" id="gender" th:field="*{gender}" required>
@@ -98,15 +93,14 @@
             <label for="interest">흥미</label>
             <input type="text" class="form-control" id="interest" th:field="*{interest}" placeholder="흥미를 입력하세요" required>
         </div>
-        <!-- 추가된 입력 필드들 끝 -->
 
         <button type="submit" class="btn btn-primary">회원가입</button>
     </form>
 </div>
 
-<!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src=“https://code.jquery.com/jquery-3.5.1.slim.min.js”>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+```
