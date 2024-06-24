@@ -19,6 +19,7 @@ import java.util.UUID;
 @Controller
 public class UserController {
 
+
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -57,6 +58,7 @@ public class UserController {
         model.addAttribute("userCreateForm", new UserCreateForm());
         return "signup_form";
     }
+
     @PostMapping("/signup")
     public String signupUser(@Valid UserCreateForm form, BindingResult result, Model model) {
         if (result.hasErrors()) {
@@ -72,7 +74,7 @@ public class UserController {
         try {
             userService.createUser(form);
             model.addAttribute("message", "회원가입이 완료되었습니다.");
-            return "signup_success";
+            return "signup_success"; // 뷰 이름을 반환합니다.
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "signup_form";
