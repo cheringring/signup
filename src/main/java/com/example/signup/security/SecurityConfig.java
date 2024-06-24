@@ -18,22 +18,25 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(new AntPathRequestMatcher("/signup"), new AntPathRequestMatcher("/login"), new AntPathRequestMatcher("/resources/**")).permitAll()
+                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .logout((logout) -> logout
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
-                );
+                )
+                .csrf(csrf -> csrf.disable()); // CSRF 보호 비활성화
 
         return http.build();
-        }
     }
+    }
+

@@ -17,11 +17,7 @@ import java.time.LocalDateTime;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final NaverApiService naverApiService;
-
-    public UserEntity fetchUserInfo(String code, String state) {
-        return naverApiService.getUserInfo(code, state);
-    }
+    private final NaverApiService naverApiService; // NaverApiService 의존성 주입
 
     public void createUser(UserCreateForm form) {
         UserEntity user = new UserEntity();
@@ -36,7 +32,11 @@ public class UserService {
         user.setUpdatedAt(LocalDateTime.now());
 
         userRepository.save(user);
+    }
 
+    // Naver API를 통해 사용자 정보를 가져오는 메서드 추가
+    public UserEntity fetchUserInfo(String code, String state) {
+        return naverApiService.getUserInfo(code, state);
 
 //    public void create(String userId, String username, String email, String password, String addr, String occupation, String interest, @NotEmpty(message = "취미는 필수항목입니다.") String userCreateFormInterest) {
 //        UserEntity user = UserEntity.builder()
