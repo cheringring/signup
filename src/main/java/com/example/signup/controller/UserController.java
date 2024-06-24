@@ -1,7 +1,6 @@
 package com.example.signup.controller;
 
 import com.example.signup.Form.UserCreateForm;
-import com.example.signup.Form.UserCreateForm;
 import com.example.signup.entity.UserEntity;
 import com.example.signup.service.UserService;
 import jakarta.validation.Valid;
@@ -12,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
@@ -20,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class UserController {
+
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -65,24 +64,19 @@ public class UserController {
             return "signup_form";
         }
 
+        // 중복 체크
+        if (userService.isUserExists(form.getEmail(), form.getUserId())) {
+            model.addAttribute("error", "이미 등록된 사용자입니다.");
+            return "signup_form";
+        }
+
         try {
             userService.createUser(form);
-            return "redirect:/signup/success";
+            model.addAttribute("message", "회원가입이 완료되었습니다.");
+            return "signup_success";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "signup_form";
         }
     }
-
-    @GetMapping("/signup/success")
-    public String signupSuccess(Model model) {
-        model.addAttribute("message", "회원가입이 완료되었습니다. 잠시 후 로그인 페이지로 이동합니다.");
-        return "signup_success";
-    }
-
-    @GetMapping("/login")
-    public String showLoginForm() {
-        return "login_form";
-    }
-
 }

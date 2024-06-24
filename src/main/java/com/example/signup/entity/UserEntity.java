@@ -19,46 +19,37 @@ public class UserEntity {
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    private Long User_idx;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false,unique = true)
-    private Long User_ID;
-
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+@Column(nullable = false, unique = true)
+private Long userId;
 
     @Column(nullable = false)
-    private String UserName;
+    private String userName;
 
+    @Column(nullable = false, unique = true)
+    private String email;
 
-    @Column(nullable = false,unique = true)
-    private String Email;
-
-
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String password;
     private String confirmPassword;
 
-
-    private Date Reg_Date;
-
+    private Date regDate;
 
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
-
-
 
     @Column(nullable = false)
     private String addr;
 
     @Column(nullable = false)
-    private String Occupation;
+    private String occupation;
 
     @Column(nullable = false)
-    private String Interest;
+    private String interest;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 
 
 }
