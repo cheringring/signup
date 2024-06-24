@@ -19,7 +19,6 @@ import java.util.UUID;
 @Controller
 public class UserController {
 
-
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -27,6 +26,11 @@ public class UserController {
 
     @Value("${naver.api.redirect-uri}")
     private String redirectURI;
+
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "login_form"; // 로그인 페이지를 반환
+    }
 
     @GetMapping("/login/naver")
     public String loginWithNaver() {
@@ -74,7 +78,7 @@ public class UserController {
         try {
             userService.createUser(form);
             model.addAttribute("message", "회원가입이 완료되었습니다.");
-            return "signup_success"; // 뷰 이름을 반환합니다.
+            return "signup_success";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "signup_form";
