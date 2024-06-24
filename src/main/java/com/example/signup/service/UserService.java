@@ -31,7 +31,13 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+            System.out.println("User successfully saved: " + user.getEmail());  // 로그 대신 콘솔 출력 사용
+        } catch (Exception e) {
+            System.out.println("Error saving user: " + e.getMessage());  // 로그 대신 콘솔 출력 사용
+            throw new RuntimeException("Error saving user: " + e.getMessage());
+        }
     }
 
     public UserEntity fetchUserInfo(String code, String state) {
