@@ -21,7 +21,7 @@ public class UserService {
     public void createUser(UserCreateForm form) {
         UserEntity user = new UserEntity();
         user.setUserId(form.getUserId());
-        user.setUser_name(form.getUser_name());
+        user.setUserName(form.getUserName());
         user.setEmail(form.getEmail());
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         user.setAddr(form.getAddr());

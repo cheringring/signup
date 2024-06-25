@@ -32,15 +32,18 @@
         </ul>
     </div>
 </nav>
+
 <div class="container">
     <h1>회원정보</h1>
-    <p>이름: <span th:text="${user.user_name}">사용자 이름</span></p>
-    <p>이메일: <span th:text="${user.email}">user@example.com</span></p>
-    <p>성별: <span th:text="${user.gender}">성별</span></p>
-    <p>주소: <span th:text="${user.addr}">주소</span></p>
-    <p>직업: <span th:text="${user.occupation}">직업</span></p>
-    <p>흥미: <span th:text="${user.interest}">흥미</span></p>
+    <p>사용자 ID: <span th:text="${user.userId}"></span></p>
+    <p>사용자 이름: <span th:text="${user.userName}"></span></p>
+    <p>이메일: <span th:text="${user.email}"></span></p>
+    <p>주소: <span th:text="${user.addr}"></span></p>
+    <p>성별: <span th:text="${user.gender}"></span></p>
+    <p>직업: <span th:text="${user.occupation}"></span></p>
+    <p>흥미: <span th:text="${user.interest}"></span></p>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

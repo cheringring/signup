@@ -20,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class UserController {
+
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -102,6 +103,16 @@ public class UserController {
         }
     }
 
+    @GetMapping("/home")
+    public String showHome(HttpSession session, Model model) {
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user != null) {
+            model.addAttribute("user", user);
+            return "home";
+        }
+        return "redirect:/login";
+    }
+
     @GetMapping("/userProfile")
     public String showUserProfile(HttpSession session, Model model) {
         UserEntity user = (UserEntity) session.getAttribute("user");
@@ -110,6 +121,5 @@ public class UserController {
             return "userProfile";
         }
         return "redirect:/login";
-        }
     }
-
+}

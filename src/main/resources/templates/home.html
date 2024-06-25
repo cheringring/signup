@@ -24,15 +24,20 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/userProfile">회원정보</a>
+                <a class="nav-link" href="userProfile.html">회원정보</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">로그아웃</a>
             </li>
         </ul>
     </div>
 </nav>
+
 <div class="container">
     <h1>홈</h1>
-    <p>환영합니다, <span th:text="${user.user_name}">사용자 이름</span>님!</p>
+    <p>안녕하세요, <span th:text="${user.userName}"></span>님!</p>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

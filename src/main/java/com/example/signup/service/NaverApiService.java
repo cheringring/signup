@@ -49,7 +49,7 @@ public class NaverApiService {
             Map<String, Object> responseObject = (Map<String, Object>) jsonResponse.get("response");
 
             UserEntity user = new UserEntity();
-            user.setUser_name((String) responseObject.get("name"));
+            user.setUserName((String) responseObject.get("name"));
             user.setEmail((String) responseObject.get("email"));
             String gender = (String) responseObject.get("gender");
             if (gender.equals("M")) {

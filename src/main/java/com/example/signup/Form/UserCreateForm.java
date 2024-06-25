@@ -13,7 +13,7 @@ public class UserCreateForm {
 
 
     @NotEmpty(message = "사용자 이름은 필수 항목입니다.")
-    private String user_name;
+    private String userName;
 
     @NotEmpty(message = "비밀번호는 필수 항목입니다.")
     private String password;
