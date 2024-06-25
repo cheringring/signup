@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Slf4j
 @Builder
@@ -23,7 +22,7 @@ public class UserEntity {
    private Long User_idx;
 
     @Column(nullable = false)
-    private String user_id;
+    private String userId;
 
 
     @Column(nullable = false)

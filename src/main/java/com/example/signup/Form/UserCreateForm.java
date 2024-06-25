@@ -9,7 +9,7 @@ import lombok.Data;
 public class UserCreateForm {
 
     @NotEmpty(message = "사용자 이름은 필수 항목입니다.")
-    private String user_id;
+    private String userId;
 
 
     @NotEmpty(message = "사용자 이름은 필수 항목입니다.")

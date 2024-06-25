@@ -13,8 +13,9 @@
         .container {
             margin-top: 50px;
         }
-        .social-login-btn {
-            margin-top: 10px;
+        .alert {
+            margin-top: 20px;
+            display: none; /* 기본적으로 숨기기 */
         }
     </style>
 </head>
@@ -27,10 +28,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">홈</a>
+                <a class="nav-link" href="index.html">홈</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/signup">회원가입</a>
+                <a class="nav-link" href="signup_form.html">회원가입</a>
             </li>
         </ul>
     </div>
@@ -38,10 +39,10 @@
 
 <div class="container">
     <h1>로그인</h1>
-    <form action="/login" method="post">
+    <form id="loginForm" th:action="@{/login}" method="post">
         <div class="form-group">
-            <label for="email">이메일</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required>
+            <label for="userId">사용자 ID</label>
+            <input type="text" class="form-control" id="userId" name="userId" placeholder="사용자 ID를 입력하세요" required>
         </div>
         <div class="form-group">
             <label for="password">비밀번호</label>
@@ -49,12 +50,15 @@
         </div>
         <button type="submit" class="btn btn-primary">로그인</button>
     </form>
-
+    <!-- 네이버 로그인 버튼 추가 -->
     <div class="social-login-btn">
-        <a href="login/naver" class="btn btn-success btn-block">네이버 아이디로 로그인</a>
+        <a href="http://localhost:8080/login/naver" class="btn btn-success btn-block">네이버 아이디로 로그인</a>
+    </div>
+    <!-- 알림 메시지 -->
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <p th:text="${error}"></p>
     </div>
 </div>
-
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

@@ -20,7 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class UserController {
-
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -31,10 +30,21 @@ public class UserController {
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "login_form";
+        return "login_form"; // 로그인 페이지를 반환
     }
 
-    // 네이버 로그인 창으로 리디렉션
+    @PostMapping("/login")
+    public String loginUser(@RequestParam String userId, @RequestParam String password, HttpSession session, Model model) {
+        try {
+            UserEntity user = userService.authenticate(userId, password);
+            session.setAttribute("user", user);
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "login_form";
+        }
+    }
+
     @GetMapping("/login/naver")
     public String loginWithNaver() {
         String state = UUID.randomUUID().toString();
@@ -47,7 +57,6 @@ public class UserController {
         return "redirect:" + apiURL;
     }
 
-    // 네이버 로그인 콜백 처리
     @GetMapping("/login/naver/callback")
     public String naverCallback(@RequestParam String code, @RequestParam String state, HttpSession session, Model model) {
         try {
@@ -93,13 +102,14 @@ public class UserController {
         }
     }
 
-    @GetMapping("/check-user")
-    public ResponseEntity<UserEntity> checkUser(@RequestParam String email) {
-        UserEntity user = userService.getUserByEmail(email);
+    @GetMapping("/userProfile")
+    public String showUserProfile(HttpSession session, Model model) {
+        UserEntity user = (UserEntity) session.getAttribute("user");
         if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
-            return ResponseEntity.notFound().build();
+            model.addAttribute("user", user);
+            return "userProfile";
+        }
+        return "redirect:/login";
         }
     }
-    }
+

@@ -4,8 +4,6 @@ import com.example.signup.Form.UserCreateForm;
 import com.example.signup.entity.enum_.Gender;
 import com.example.signup.repository.UserRepository;
 import com.example.signup.entity.UserEntity;
-import jakarta.validation.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,7 @@ public class UserService {
 
     public void createUser(UserCreateForm form) {
         UserEntity user = new UserEntity();
-        user.setUser_id(form.getUser_id());
+        user.setUserId(form.getUserId());
         user.setUser_name(form.getUser_name());
         user.setEmail(form.getEmail());
         user.setPassword(passwordEncoder.encode(form.getPassword()));
@@ -64,5 +62,14 @@ public class UserService {
 
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElse(null);
+    }
+
+    public UserEntity authenticate(String userId, String password) {
+        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Invalid credentials"));
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        } else {
+            throw new RuntimeException("Invalid credentials");
+        }
     }
 }

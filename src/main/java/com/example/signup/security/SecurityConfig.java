@@ -19,21 +19,20 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/signup", "/signup/success", "/login", "/login/naver", "/resources/**").permitAll()
-                        .requestMatchers("/home", "/userProfile").authenticated()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**","/login/naver").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(formLogin -> formLogin
+                .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )

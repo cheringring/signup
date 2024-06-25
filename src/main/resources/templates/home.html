@@ -6,12 +6,12 @@
     <title>홈</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .navbar-nav.ml-auto .nav-item .nav-link {
-            display: flex;
-            align-items: center;
+        body {
+            margin: 0;
+            padding: 0;
         }
-        .navbar-nav.ml-auto .nav-item .nav-link .fa-user {
-            margin-left: 8px;
+        .container {
+            margin-top: 50px;
         }
     </style>
 </head>
@@ -24,18 +24,15 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/userProfile}">
-                    <i class="fa fa-user"></i>
-                </a>
+                <a class="nav-link" href="/userProfile">회원정보</a>
             </li>
         </ul>
     </div>
 </nav>
 <div class="container">
-    <h1>홈 페이지</h1>
-    <p>로그인 되었습니다.</p>
+    <h1>홈</h1>
+    <p>환영합니다, <span th:text="${user.user_name}">사용자 이름</span>님!</p>
 </div>
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
