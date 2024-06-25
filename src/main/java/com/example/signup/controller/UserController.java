@@ -3,9 +3,11 @@ package com.example.signup.controller;
 import com.example.signup.Form.UserCreateForm;
 import com.example.signup.entity.UserEntity;
 import com.example.signup.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,9 +31,10 @@ public class UserController {
 
     @GetMapping("/login")
     public String showLoginForm() {
-        return "login_form"; // 로그인 페이지를 반환
+        return "login_form";
     }
 
+    // 네이버 정보 가져오는 네이버로그인창
     @GetMapping("/login/naver")
     public String loginWithNaver() {
         String state = UUID.randomUUID().toString();
@@ -45,11 +48,16 @@ public class UserController {
     }
 
     @GetMapping("/login/naver/callback")
-    public String naverCallback(@RequestParam String code, @RequestParam String state, Model model) {
+    public String naverCallback(@RequestParam String code, @RequestParam String state, HttpSession session, Model model) {
         try {
             UserEntity user = userService.fetchUserInfo(code, state);
-            model.addAttribute("user", user);
-            return "userProfile";
+            if (userService.isUserExists(user.getEmail())) {
+                user = userService.findUserByEmail(user.getEmail());
+            } else {
+                userService.saveUser(user);
+            }
+            session.setAttribute("user", user);
+            return "redirect:/home";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", e.getMessage());
@@ -69,8 +77,7 @@ public class UserController {
             return "signup_form";
         }
 
-        // 중복 체크
-        if (userService.isUserExists(form.getEmail(), form.getUserId())) {
+        if (userService.isUserExists(form.getEmail())) {
             model.addAttribute("error", "이미 등록된 사용자입니다.");
             return "signup_form";
         }
@@ -84,4 +91,20 @@ public class UserController {
             return "signup_form";
         }
     }
-}
+
+    @GetMapping("/check-user")
+    public ResponseEntity<UserEntity> checkUser(@RequestParam String email) {
+        UserEntity user = userService.getUserByEmail(email);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+    @GetMapping("/userProfile")
+    public String showUserProfile() {
+        return "userProfile";
+        }
+    }

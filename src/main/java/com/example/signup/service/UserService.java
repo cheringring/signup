@@ -1,6 +1,7 @@
 package com.example.signup.service;
 
 import com.example.signup.Form.UserCreateForm;
+import com.example.signup.entity.enum_.Gender;
 import com.example.signup.repository.UserRepository;
 import com.example.signup.entity.UserEntity;
 import jakarta.validation.constraints.NotEmpty;
@@ -21,11 +22,12 @@ public class UserService {
 
     public void createUser(UserCreateForm form) {
         UserEntity user = new UserEntity();
-        user.setUserName(form.getUsername());
+        user.setUser_id(form.getUser_id());
+        user.setUser_name(form.getUser_name());
         user.setEmail(form.getEmail());
         user.setPassword(passwordEncoder.encode(form.getPassword()));
         user.setAddr(form.getAddr());
-        user.setGender(form.getGender());
+        user.setGender(Gender.valueOf(form.getGender().toUpperCase()));
         user.setOccupation(form.getOccupation());
         user.setInterest(form.getInterest());
         user.setCreatedAt(LocalDateTime.now());
@@ -33,9 +35,9 @@ public class UserService {
 
         try {
             userRepository.save(user);
-            System.out.println("User successfully saved: " + user.getEmail());  // 로그 대신 콘솔 출력 사용
+            System.out.println("User successfully saved: " + user.getEmail());
         } catch (Exception e) {
-            System.out.println("Error saving user: " + e.getMessage());  // 로그 대신 콘솔 출력 사용
+            System.out.println("Error saving user: " + e.getMessage());
             throw new RuntimeException("Error saving user: " + e.getMessage());
         }
     }
@@ -44,8 +46,23 @@ public class UserService {
         return naverApiService.getUserInfo(code, state);
     }
 
-    // 중복 체크 메서드 추가
-    public boolean isUserExists(String email, Long userId) {
-        return userRepository.existsByEmail(email) || userRepository.existsByUserId(userId);
+    public boolean isUserExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public void saveUser(UserEntity user) {
+        user.setUpdatedAt(LocalDateTime.now());
+        if (user.getCreatedAt() == null) {
+            user.setCreatedAt(LocalDateTime.now());
+        }
+        userRepository.save(user);
+    }
+
+    public UserEntity getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElse(null);
     }
 }

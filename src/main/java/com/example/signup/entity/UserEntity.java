@@ -14,33 +14,31 @@ import java.util.Date;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "User_t")
+@Table(name = "Users")
 public class UserEntity {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long User_idx;
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-@Column(nullable = false, unique = true)
-private Long userId;
+
+
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private Long User_idx;
 
     @Column(nullable = false)
-    private String userName;
+    private String user_id;
+
+
+    @Column(nullable = false)
+    private String user_name;
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true)
-    private String password;
-    private String confirmPassword;
-
-    private Date regDate;
-
-    @Enumerated(value = EnumType.STRING)
-    private Gender gender;
-
     @Column(nullable = false)
+    private String password;
+
     private String addr;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(nullable = false)
     private String occupation;

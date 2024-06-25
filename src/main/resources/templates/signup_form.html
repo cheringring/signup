@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입</title>
-    <!-- Bootstrap CSS CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -65,20 +64,19 @@
         </div>
         <div class="form-group">
             <label for="password">비밀번호</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요." required>
+            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요" required>
         </div>
         <div class="form-group">
             <label for="confirmPassword">비밀번호 확인</label>
             <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="비밀번호를 다시 입력하세요" required>
         </div>
-
         <div class="form-group">
             <label for="gender">성별</label>
             <select class="form-control" id="gender" th:field="*{gender}" required>
-                <option value="">성별을 선택하세요.</option>
-                <option value="man">남성</option>
-                <option value="woman">여성</option>
-                <option value="other">기타</option>
+                <option value="">성별을 선택하세요</option>
+                <option value="MALE">남성</option>
+                <option value="FEMALE">여성</option>
+                <option value="OTHER">기타</option>
             </select>
         </div>
         <div class="form-group">
@@ -93,16 +91,10 @@
             <label for="interest">흥미</label>
             <input type="text" class="form-control" id="interest" th:field="*{interest}" placeholder="흥미를 입력하세요" required>
         </div>
-
         <button type="submit" class="btn btn-primary">회원가입</button>
 
-        <!-- 에러 메시지 표시 -->
         <div th:if="${error}" class="alert alert-danger" role="alert">
             <p th:text="${error}"></p>
-        </div>
-        <!-- 성공 메시지 표시 -->
-        <div th:if="${message}" class="alert alert-success" role="alert">
-            <p th:text="${message}"></p>
         </div>
     </form>
 </div>

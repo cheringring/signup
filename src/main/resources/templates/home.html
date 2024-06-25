@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>로그인</title>
+    <title>홈</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
+        .navbar-nav.ml-auto .nav-item .nav-link {
+            display: flex;
+            align-items: center;
         }
-        .container {
-            margin-top: 50px;
-        }
-        .social-login-btn {
-            margin-top: 10px;
+        .navbar-nav.ml-auto .nav-item .nav-link .fa-user {
+            margin-left: 8px;
         }
     </style>
 </head>
@@ -27,34 +24,18 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="/">홈</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/signup">회원가입</a>
+                <a class="nav-link" th:href="@{/userProfile}">
+                    <i class="fa fa-user"></i>
+                </a>
             </li>
         </ul>
     </div>
 </nav>
-
 <div class="container">
-    <h1>로그인</h1>
-    <form action="/login" method="post">
-        <div class="form-group">
-            <label for="email">이메일</label>
-            <input type="email" class="form-control" id="email" name="email" placeholder="이메일을 입력하세요" required>
-        </div>
-        <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-        </div>
-        <button type="submit" class="btn btn-primary">로그인</button>
-    </form>
-
-    <div class="social-login-btn">
-        <a href="login/naver" class="btn btn-success btn-block">네이버 아이디로 로그인</a>
-    </div>
+    <h1>홈 페이지</h1>
+    <p>로그인 되었습니다.</p>
 </div>
-
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
