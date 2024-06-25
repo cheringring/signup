@@ -3,7 +3,6 @@ package com.example.signup.Form;
 import com.example.signup.entity.enum_.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data

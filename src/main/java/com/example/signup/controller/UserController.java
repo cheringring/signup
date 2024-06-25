@@ -34,7 +34,7 @@ public class UserController {
         return "login_form";
     }
 
-    // 네이버 정보 가져오는 네이버로그인창
+    // 네이버 로그인 창으로 리디렉션
     @GetMapping("/login/naver")
     public String loginWithNaver() {
         String state = UUID.randomUUID().toString();
@@ -47,6 +47,7 @@ public class UserController {
         return "redirect:" + apiURL;
     }
 
+    // 네이버 로그인 콜백 처리
     @GetMapping("/login/naver/callback")
     public String naverCallback(@RequestParam String code, @RequestParam String state, HttpSession session, Model model) {
         try {
@@ -101,10 +102,4 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
-    @GetMapping("/userProfile")
-    public String showUserProfile() {
-        return "userProfile";
-        }
     }

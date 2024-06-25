@@ -51,12 +51,12 @@
     <h1>회원가입</h1>
     <form id="signupForm" th:action="@{/signup}" th:object="${userCreateForm}" method="post">
         <div class="form-group">
-            <label for="userId">사용자 ID</label>
-            <input type="text" class="form-control" id="userId" th:field="*{userId}" placeholder="사용자 ID를 입력하세요" required>
+            <label for="user_id">사용자 ID</label>
+            <input type="text" class="form-control" id="user_id" th:field="*{user_id}" placeholder="사용자 ID를 입력하세요" required>
         </div>
         <div class="form-group">
-            <label for="username">사용자 이름</label>
-            <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="사용자 이름을 입력하세요" required>
+            <label for="user_name">사용자 이름</label>
+            <input type="text" class="form-control" id="user_name" th:field="*{user_name}" placeholder="사용자 이름을 입력하세요" required>
         </div>
         <div class="form-group">
             <label for="email">이메일</label>
@@ -73,7 +73,7 @@
         <div class="form-group">
             <label for="gender">성별</label>
             <select class="form-control" id="gender" th:field="*{gender}" required>
-                <option value="">성별을 선택하세요</option>
+                <option value="">성별을 선택하세요.</option>
                 <option value="MALE">남성</option>
                 <option value="FEMALE">여성</option>
                 <option value="OTHER">기타</option>
@@ -93,6 +93,7 @@
         </div>
         <button type="submit" class="btn btn-primary">회원가입</button>
 
+        <!-- 에러 메시지 표시 -->
         <div th:if="${error}" class="alert alert-danger" role="alert">
             <p th:text="${error}"></p>
         </div>
