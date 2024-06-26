@@ -15,6 +15,7 @@ import java.util.Map;
 
 @Service
 public class NaverApiService {
+
     @Value("${naver.api.client-id}")
     private String clientId;
 
@@ -49,8 +50,8 @@ public class NaverApiService {
             Map<String, Object> responseObject = (Map<String, Object>) jsonResponse.get("response");
 
             UserEntity user = new UserEntity();
-            user.setUserName((String) responseObject.get("name"));
             user.setEmail((String) responseObject.get("email"));
+            user.setUserName((String) responseObject.get("name"));
             String gender = (String) responseObject.get("gender");
             if (gender.equals("M")) {
                 user.setGender(Gender.MALE);

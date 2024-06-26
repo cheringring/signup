@@ -39,7 +39,7 @@
         </div>
         <div class="form-group">
             <label for="userName">사용자 이름</label>
-            <input type="text" class="form-control" id="userName" th:field="*{userName}" placeholder="사용자 이름을 입력하세요" required>
+            <input type="text" class="form-control" id="userName" th:field="*{userName}" placeholder="사용자 이름을 입력하세요" readonly>
         </div>
         <div class="form-group">
             <label for="email">이메일</label>
@@ -47,12 +47,7 @@
         </div>
         <div class="form-group">
             <label for="gender">성별</label>
-            <select class="form-control" id="gender" th:field="*{gender}" required>
-                <option value="">성별을 선택하세요.</option>
-                <option value="MALE">남성</option>
-                <option value="FEMALE">여성</option>
-                <option value="OTHER">기타</option>
-            </select>
+            <input type="text" class="form-control" id="gender" th:field="*{gender}" placeholder="성별을 선택하세요" readonly>
         </div>
         <div class="form-group">
             <label for="addr">주소</label>

@@ -113,6 +113,7 @@ public class UserController {
         UserCreateForm form = new UserCreateForm();
         form.setEmail(naverUser.getEmail());
         form.setUserName(naverUser.getUserName());
+        form.setGender(naverUser.getGender().toString());
         model.addAttribute("userCreateForm", form);
         return "naver_signup_form";
     }
@@ -163,5 +164,8 @@ public class UserController {
             return "userProfile";
         }
         return "redirect:/login";
+
+
     }
 }
+

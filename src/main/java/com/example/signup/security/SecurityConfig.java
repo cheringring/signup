@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**","/login/naver").permitAll()
+                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**","/login/naver","/naverSignup").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
