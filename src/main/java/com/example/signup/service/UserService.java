@@ -60,10 +60,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public UserEntity getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
-    }
-
     public UserEntity authenticate(String userId, String password) {
         UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Invalid credentials"));
         if (passwordEncoder.matches(password, user.getPassword())) {

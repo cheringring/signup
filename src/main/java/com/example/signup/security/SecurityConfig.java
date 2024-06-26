@@ -19,10 +19,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize
+                .authorizeRequests(authorize -> authorize
                         .requestMatchers("/signup", "/signup/success", "/login", "/resources/**","/login/naver").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -32,11 +33,10 @@ public class SecurityConfig {
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable()); // CSRF 보호 비활성화
+                .csrf(csrf -> csrf.disable()); // 람다 표현식을 사용하여 CSRF 보호 비활성화
 
         return http.build();
     }

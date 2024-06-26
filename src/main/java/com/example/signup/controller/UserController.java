@@ -101,7 +101,9 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "signup_form";
         }
+
     }
+
 
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model) {
@@ -112,6 +114,7 @@ public class UserController {
         }
         return "redirect:/login";
     }
+
 
     @GetMapping("/userProfile")
     public String showUserProfile(HttpSession session, Model model) {
