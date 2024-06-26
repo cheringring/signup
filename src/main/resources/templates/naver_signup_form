@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>네이버 추가 정보 입력</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">소곤소곤</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/login">로그인</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>네이버 추가 정보 입력</h1>
+    <form id="naverSignupForm" th:action="@{/naverSignup}" th:object="${userCreateForm}" method="post">
+        <div class="form-group">
+            <label for="userId">사용자 ID</label>
+            <input type="text" class="form-control" id="userId" th:field="*{userId}" placeholder="사용자 ID를 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="userName">사용자 이름</label>
+            <input type="text" class="form-control" id="userName" th:field="*{userName}" placeholder="사용자 이름을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="이메일을 입력하세요" readonly>
+        </div>
+        <div class="form-group">
+            <label for="gender">성별</label>
+            <select class="form-control" id="gender" th:field="*{gender}" required>
+                <option value="">성별을 선택하세요.</option>
+                <option value="MALE">남성</option>
+                <option value="FEMALE">여성</option>
+                <option value="OTHER">기타</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="addr">주소</label>
+            <input type="text" class="form-control" id="addr" th:field="*{addr}" placeholder="주소를 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="occupation">직업</label>
+            <input type="text" class="form-control" id="occupation" th:field="*{occupation}" placeholder="직업을 입력하세요" required>
+        </div>
+        <div class="form-group">
+            <label for="interest">흥미</label>
+            <input type="text" class="form-control" id="interest" th:field="*{interest}" placeholder="흥미를 입력하세요" required>
+        </div>
+        <button type="submit" class="btn btn-primary">회원가입 완료</button>
+
+        <!-- 에러 메시지 표시 -->
+        <div th:if="${error}" class="alert alert-danger" role="alert">
+            <p th:text="${error}"></p>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

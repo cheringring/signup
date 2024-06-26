@@ -2,6 +2,7 @@ package com.example.signup.controller;
 
 import com.example.signup.Form.UserCreateForm;
 import com.example.signup.entity.UserEntity;
+import com.example.signup.entity.enum_.Gender;
 import com.example.signup.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -20,7 +21,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class UserController {
-
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -64,11 +64,12 @@ public class UserController {
             UserEntity user = userService.fetchUserInfo(code, state);
             if (userService.isUserExists(user.getEmail())) {
                 user = userService.findUserByEmail(user.getEmail());
+                session.setAttribute("user", user); // 세션에 사용자 정보 저장
+                return "redirect:/home"; // 홈 화면으로 리디렉션
             } else {
-                userService.saveUser(user);
+                session.setAttribute("naverUser", user); // 세션에 네이버 사용자 정보 저장
+                return "redirect:/naverSignup"; // 추가 정보 입력 페이지로 리디렉션
             }
-            session.setAttribute("user", user);
-            return "redirect:/home";
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("error", e.getMessage());
@@ -101,9 +102,48 @@ public class UserController {
             model.addAttribute("error", e.getMessage());
             return "signup_form";
         }
-
     }
 
+    @GetMapping("/naverSignup")
+    public String showNaverSignupForm(HttpSession session, Model model) {
+        UserEntity naverUser = (UserEntity) session.getAttribute("naverUser");
+        if (naverUser == null) {
+            return "redirect:/login";
+        }
+        UserCreateForm form = new UserCreateForm();
+        form.setEmail(naverUser.getEmail());
+        form.setUserName(naverUser.getUserName());
+        model.addAttribute("userCreateForm", form);
+        return "naver_signup_form";
+    }
+
+    @PostMapping("/naverSignup")
+    public String completeNaverSignup(@Valid UserCreateForm form, BindingResult result, HttpSession session, Model model) {
+        if (result.hasErrors()) {
+            return "naver_signup_form";
+        }
+
+        if (userService.isUserExists(form.getEmail())) {
+            model.addAttribute("error", "이미 등록된 사용자입니다.");
+            return "naver_signup_form";
+        }
+
+        try {
+            UserEntity naverUser = (UserEntity) session.getAttribute("naverUser");
+            naverUser.setUserId(form.getUserId());
+            naverUser.setAddr(form.getAddr());
+            naverUser.setGender(Gender.valueOf(form.getGender().toUpperCase()));
+            naverUser.setOccupation(form.getOccupation());
+            naverUser.setInterest(form.getInterest());
+            userService.saveUser(naverUser);
+            session.setAttribute("user", naverUser);
+            session.removeAttribute("naverUser");
+            return "redirect:/home";
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+            return "naver_signup_form";
+        }
+    }
 
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model) {
@@ -114,7 +154,6 @@ public class UserController {
         }
         return "redirect:/login";
     }
-
 
     @GetMapping("/userProfile")
     public String showUserProfile(HttpSession session, Model model) {
