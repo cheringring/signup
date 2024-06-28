@@ -13,6 +13,10 @@
         .container {
             margin-top: 50px;
         }
+        .navbar .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
     </style>
 </head>
 <body>
@@ -23,11 +27,14 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="userProfile.html">회원정보</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">로그아웃</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="https://via.placeholder.com/30" class="rounded-circle" alt="user icon">
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/userProfile">회원정보</a>
+                    <a class="dropdown-item" href="/logout">로그아웃</a>
+                </div>
             </li>
         </ul>
     </div>
@@ -35,7 +42,12 @@
 
 <div class="container">
     <h1>홈</h1>
-    <p>안녕하세요, <span th:text="${user.userName}"></span>님!</p>
+    <p th:if="${user != null}">
+        안녕하세요, <span th:text="${user.userName}"></span>님!
+    </p>
+    <p th:if="${user == null}">
+        안녕하세요, 방문자님!
+    </p>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

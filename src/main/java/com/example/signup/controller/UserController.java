@@ -21,6 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Controller
 public class UserController {
+
+
     private final UserService userService;
 
     @Value("${naver.api.client-id}")
@@ -58,6 +60,7 @@ public class UserController {
         return "redirect:" + apiURL;
     }
 
+    // 수요일 수정부분: 네이버 로그인 콜백 처리
     @GetMapping("/login/naver/callback")
     public String naverCallback(@RequestParam String code, @RequestParam String state, HttpSession session, Model model) {
         try {
@@ -104,6 +107,7 @@ public class UserController {
         }
     }
 
+    // 수요일 수정부분: 네이버 회원가입 폼 보여주기
     @GetMapping("/naverSignup")
     public String showNaverSignupForm(HttpSession session, Model model) {
         UserEntity naverUser = (UserEntity) session.getAttribute("naverUser");
@@ -118,14 +122,10 @@ public class UserController {
         return "naver_signup_form";
     }
 
+    // 수요일 수정부분: 네이버 회원가입 완료 처리
     @PostMapping("/naverSignup")
     public String completeNaverSignup(@Valid UserCreateForm form, BindingResult result, HttpSession session, Model model) {
         if (result.hasErrors()) {
-            return "naver_signup_form";
-        }
-
-        if (userService.isUserExists(form.getEmail())) {
-            model.addAttribute("error", "이미 등록된 사용자입니다.");
             return "naver_signup_form";
         }
 
@@ -139,7 +139,7 @@ public class UserController {
             userService.saveUser(naverUser);
             session.setAttribute("user", naverUser);
             session.removeAttribute("naverUser");
-            return "redirect:/home";
+            return "redirect:/signup_success";
         } catch (Exception e) {
             model.addAttribute("error", e.getMessage());
             return "naver_signup_form";
@@ -149,11 +149,8 @@ public class UserController {
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model) {
         UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user != null) {
-            model.addAttribute("user", user);
-            return "home";
-        }
-        return "redirect:/login";
+        model.addAttribute("user", user); // 세션에 사용자 정보가 없을 경우 null일 수 있음
+        return "home";
     }
 
     @GetMapping("/userProfile")
@@ -164,8 +161,5 @@ public class UserController {
             return "userProfile";
         }
         return "redirect:/login";
-
-
     }
 }
-
