@@ -1,8 +1,11 @@
 package com.example.signup.security;
 
+import com.example.signup.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -16,20 +19,29 @@ import org.springframework.security.web.header.writers.frameoptions.XFrameOption
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
-@RequiredArgsConstructor
+
+
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final UserService userService;
+
+    @Autowired
+    public SecurityConfig(@Lazy UserService userService) {
+        this.userService = userService;
+    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**", "/login/naver", "/naverSignup", "/users").permitAll() // /users 엔드포인트 접근 허용
+                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**", "/login/naver", "/naverSignup", "/users","/home").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/home", true)
                         .failureUrl("/login?error=true")
                         .permitAll()
@@ -45,6 +57,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // BCryptPasswordEncoder 사용
+        return new BCryptPasswordEncoder();
     }
 }

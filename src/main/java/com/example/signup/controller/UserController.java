@@ -34,6 +34,7 @@ public class UserController {
     public String showLoginForm() {
         return "login_form"; // 로그인 페이지를 반환
     }
+
     @PostMapping("/login")
     public String loginUser(@RequestParam String userId, @RequestParam String password, HttpSession session, Model model) {
         try {
@@ -95,7 +96,7 @@ public class UserController {
         }
 
         if (userService.isUserIdExists(form.getUserId())) {
-            result.rejectValue("userId", "error.userCreateForm", "이미 등록된 아이디입니다.");
+            model.addAttribute("error", "이미 등록된 아이디입니다.");
             return "signup_form";
         }
 
@@ -126,6 +127,11 @@ public class UserController {
     @PostMapping("/naverSignup")
     public String completeNaverSignup(@Valid UserCreateForm form, BindingResult result, HttpSession session, Model model) {
         if (result.hasErrors()) {
+            return "naver_signup_form";
+        }
+
+        if (userService.isUserIdExists(form.getUserId())) {
+            model.addAttribute("error", "이미 등록된 아이디입니다.");
             return "naver_signup_form";
         }
 
@@ -162,5 +168,4 @@ public class UserController {
         }
         return "redirect:/login";
     }
-
 }
