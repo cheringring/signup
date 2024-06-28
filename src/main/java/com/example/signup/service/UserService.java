@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -23,7 +24,7 @@ public class UserService {
         user.setUserId(form.getUserId());
         user.setUserName(form.getUserName());
         user.setEmail(form.getEmail());
-        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        user.setPassword(passwordEncoder.encode(form.getPassword())); // 비밀번호 암호화
         user.setAddr(form.getAddr());
         user.setGender(Gender.valueOf(form.getGender().toUpperCase()));
         user.setOccupation(form.getOccupation());
@@ -31,15 +32,11 @@ public class UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        try {
-            userRepository.save(user);
-        } catch (Exception e) {
-            throw new RuntimeException("Error saving user: " + e.getMessage());
-        }
+        userRepository.save(user);
     }
 
-    public UserEntity fetchUserInfo(String code, String state) {
-        return naverApiService.getUserInfo(code, state);
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
     }
 
     public boolean isUserExists(String email) {
@@ -65,10 +62,15 @@ public class UserService {
     public UserEntity authenticate(String userId, String password) {
         UserEntity user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("등록된 사용자가 아닙니다."));
-        if (passwordEncoder.matches(password, user.getPassword())) {
+        if (passwordEncoder.matches(password, user.getPassword())) { // 비밀번호 비교
             return user;
         } else {
             throw new RuntimeException("잘못된 비밀번호입니다.");
         }
+    }
+
+    // fetchUserInfo 메서드 추가
+    public UserEntity fetchUserInfo(String code, String state) {
+        return naverApiService.getUserInfo(code, state);
     }
 }
