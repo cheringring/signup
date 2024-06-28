@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 @Entity
-@Table(name = "Users")
+@Table(name = "user_t")
 public class UserEntity {
 
 
@@ -21,7 +21,7 @@ public class UserEntity {
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long User_idx;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String userId;
 
 

@@ -33,9 +33,7 @@ public class UserService {
 
         try {
             userRepository.save(user);
-            System.out.println("User successfully saved: " + user.getEmail());
         } catch (Exception e) {
-            System.out.println("Error saving user: " + e.getMessage());
             throw new RuntimeException("Error saving user: " + e.getMessage());
         }
     }
@@ -46,6 +44,10 @@ public class UserService {
 
     public boolean isUserExists(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public boolean isUserIdExists(String userId) {
+        return userRepository.existsByUserId(userId);
     }
 
     public UserEntity findUserByEmail(String email) {
@@ -61,11 +63,12 @@ public class UserService {
     }
 
     public UserEntity authenticate(String userId, String password) {
-        UserEntity user = userRepository.findByUserId(userId).orElseThrow(() -> new RuntimeException("Invalid credentials"));
+        UserEntity user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("등록된 사용자가 아닙니다."));
         if (passwordEncoder.matches(password, user.getPassword())) {
             return user;
         } else {
-            throw new RuntimeException("Invalid credentials");
+            throw new RuntimeException("잘못된 비밀번호입니다.");
         }
     }
 }

@@ -17,11 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
-
 @RequiredArgsConstructor
 @Controller
 public class UserController {
-
 
     private final UserService userService;
 
@@ -35,7 +33,6 @@ public class UserController {
     public String showLoginForm() {
         return "login_form"; // 로그인 페이지를 반환
     }
-
     @PostMapping("/login")
     public String loginUser(@RequestParam String userId, @RequestParam String password, HttpSession session, Model model) {
         try {
@@ -60,18 +57,17 @@ public class UserController {
         return "redirect:" + apiURL;
     }
 
-    // 수요일 수정부분: 네이버 로그인 콜백 처리
     @GetMapping("/login/naver/callback")
     public String naverCallback(@RequestParam String code, @RequestParam String state, HttpSession session, Model model) {
         try {
             UserEntity user = userService.fetchUserInfo(code, state);
             if (userService.isUserExists(user.getEmail())) {
                 user = userService.findUserByEmail(user.getEmail());
-                session.setAttribute("user", user); // 세션에 사용자 정보 저장
-                return "redirect:/home"; // 홈 화면으로 리디렉션
+                session.setAttribute("user", user);
+                return "redirect:/home";
             } else {
-                session.setAttribute("naverUser", user); // 세션에 네이버 사용자 정보 저장
-                return "redirect:/naverSignup"; // 추가 정보 입력 페이지로 리디렉션
+                session.setAttribute("naverUser", user);
+                return "redirect:/naverSignup";
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +93,11 @@ public class UserController {
             return "signup_form";
         }
 
+        if (userService.isUserIdExists(form.getUserId())) {
+            result.rejectValue("userId", "error.userCreateForm", "이미 등록된 아이디입니다.");
+            return "signup_form";
+        }
+
         try {
             userService.createUser(form);
             model.addAttribute("message", "회원가입이 완료되었습니다.");
@@ -107,7 +108,6 @@ public class UserController {
         }
     }
 
-    // 수요일 수정부분: 네이버 회원가입 폼 보여주기
     @GetMapping("/naverSignup")
     public String showNaverSignupForm(HttpSession session, Model model) {
         UserEntity naverUser = (UserEntity) session.getAttribute("naverUser");
@@ -122,7 +122,6 @@ public class UserController {
         return "naver_signup_form";
     }
 
-    // 수요일 수정부분: 네이버 회원가입 완료 처리
     @PostMapping("/naverSignup")
     public String completeNaverSignup(@Valid UserCreateForm form, BindingResult result, HttpSession session, Model model) {
         if (result.hasErrors()) {
@@ -149,7 +148,7 @@ public class UserController {
     @GetMapping("/home")
     public String showHome(HttpSession session, Model model) {
         UserEntity user = (UserEntity) session.getAttribute("user");
-        model.addAttribute("user", user); // 세션에 사용자 정보가 없을 경우 null일 수 있음
+        model.addAttribute("user", user);
         return "home";
     }
 

@@ -24,15 +24,15 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link" href="index.html">홈</a>
+                <a class="nav-link" href="/home">홈</a>
             </li>
         </ul>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link" href="login.html">로그인</a>
+                <a class="nav-link" href="/login">로그인</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="signup_form.html">회원가입</a>
+                <a class="nav-link" href="/signup">회원가입</a>
             </li>
         </ul>
     </div>
@@ -44,22 +44,27 @@
         <div class="form-group">
             <label for="userId">사용자 ID</label>
             <input type="text" class="form-control" id="userId" th:field="*{userId}" placeholder="사용자 ID를 입력하세요" required>
+            <div th:if="${#fields.hasErrors('userId')}" class="invalid-feedback" th:errors="*{userId}">사용자 ID 오류</div>
         </div>
         <div class="form-group">
             <label for="userName">사용자 이름</label>
             <input type="text" class="form-control" id="userName" th:field="*{userName}" placeholder="사용자 이름을 입력하세요" required>
+            <div th:if="${#fields.hasErrors('userName')}" class="invalid-feedback" th:errors="*{userName}">사용자 이름 오류</div>
         </div>
         <div class="form-group">
             <label for="email">이메일</label>
             <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="이메일을 입력하세요" required>
+            <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}">이메일 오류</div>
         </div>
         <div class="form-group">
             <label for="password">비밀번호</label>
             <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요" required>
+            <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback" th:errors="*{password}">비밀번호 오류</div>
         </div>
         <div class="form-group">
             <label for="confirmPassword">비밀번호 확인</label>
             <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="비밀번호를 다시 입력하세요" required>
+            <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback" th:errors="*{confirmPassword}">비밀번호 확인 오류</div>
         </div>
         <div class="form-group">
             <label for="gender">성별</label>
@@ -69,18 +74,22 @@
                 <option value="FEMALE">여성</option>
                 <option value="OTHER">기타</option>
             </select>
+            <div th:if="${#fields.hasErrors('gender')}" class="invalid-feedback" th:errors="*{gender}">성별 오류</div>
         </div>
         <div class="form-group">
             <label for="addr">주소</label>
             <input type="text" class="form-control" id="addr" th:field="*{addr}" placeholder="주소를 입력하세요" required>
+            <div th:if="${#fields.hasErrors('addr')}" class="invalid-feedback" th:errors="*{addr}">주소 오류</div>
         </div>
         <div class="form-group">
             <label for="occupation">직업</label>
             <input type="text" class="form-control" id="occupation" th:field="*{occupation}" placeholder="직업을 입력하세요" required>
+            <div th:if="${#fields.hasErrors('occupation')}" class="invalid-feedback" th:errors="*{occupation}">직업 오류</div>
         </div>
         <div class="form-group">
             <label for="interest">흥미</label>
             <input type="text" class="form-control" id="interest" th:field="*{interest}" placeholder="흥미를 입력하세요" required>
+            <div th:if="${#fields.hasErrors('interest')}" class="invalid-feedback" th:errors="*{interest}">흥미 오류</div>
         </div>
         <button type="submit" class="btn btn-primary">회원가입</button>
 

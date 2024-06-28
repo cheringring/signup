@@ -15,30 +15,31 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**","/login/naver","/naverSignup").permitAll()
+                        .requestMatchers("/signup", "/signup/success", "/login", "/resources/**", "/login/naver", "/naverSignup", "/home").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/home", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
-                .csrf(csrf -> csrf.disable()); // 람다 표현식을 사용하여 CSRF 보호 비활성화
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
-
 }

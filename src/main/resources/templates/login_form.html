@@ -15,7 +15,6 @@
         }
         .alert {
             margin-top: 20px;
-            display: none; /* 기본적으로 숨기기 */
         }
     </style>
 </head>
@@ -28,10 +27,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="index.html">홈</a>
+                <a class="nav-link" href="/home">홈</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="signup_form.html">회원가입</a>
+                <a class="nav-link" href="/signup">회원가입</a>
             </li>
         </ul>
     </div>
@@ -55,8 +54,8 @@
         <a href="http://localhost:8080/login/naver" class="btn btn-success btn-block">네이버 아이디로 로그인</a>
     </div>
     <!-- 알림 메시지 -->
-    <div th:if="${error}" class="alert alert-danger" role="alert">
-        <p th:text="${error}"></p>
+    <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        <p th:text="${param.error ? '로그인 실패: 사용자 ID 또는 비밀번호가 잘못되었습니다.' : ''}"></p>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
