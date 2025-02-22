@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>이직상담 게시판</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- 게시판 카테고리 -->
+    <div class="board-categories mb-4">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" href="/board">전체</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/board?categoryId=2">취업고민</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/board?categoryId=3">이직상담</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/board?categoryId=4">스터디</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/board?categoryId=5">자유게시판</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 검색 폼 -->
+    <div class="search-form mb-4">
+        <form action="/board/search" method="get" class="row g-3">
+            <input type="hidden" name="categoryId" value="3">
+            <div class="col-auto">
+                <select name="searchType" class="form-select">
+                    <option value="content">제목+내용</option>
+                    <option value="author">작성자</option>
+                    <option value="tag">태그</option>
+                </select>
+            </div>
+            <div class="col">
+                <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 글쓰기 버튼 -->
+    <div class="text-end mb-3">
+        <a href="/board/write?categoryId=3" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> 글쓰기
+        </a>
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div class="board-list">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>조회</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}">1</td>
+                <td>
+                    <a th:href="@{/board/{id}(id=${post.id})}" th:text="${post.title}">게시글 제목</a>
+                    <span class="badge bg-info" th:if="${post.commentCount > 0}" 
+                          th:text="${post.commentCount}">2</span>
+                </td>
+                <td th:text="${post.authorName}">작성자</td>
+                <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}">2024-02-22</td>
+                <td th:text="${post.viewCount}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation" th:if="${posts.totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!posts.hasPrevious()} ? disabled">
+                <a class="page-link" th:href="@{/board(page=${posts.number - 1}, categoryId=3)}" 
+                   th:if="${posts.hasPrevious()}">이전</a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, posts.totalPages - 1)}"
+                th:classappend="${pageNum == posts.number} ? active">
+                <a class="page-link" th:href="@{/board(page=${pageNum}, categoryId=3)}" 
+                   th:text="${pageNum + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${!posts.hasNext()} ? disabled">
+                <a class="page-link" th:href="@{/board(page=${posts.number + 1}, categoryId=3)}" 
+                   th:if="${posts.hasNext()}">다음</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>

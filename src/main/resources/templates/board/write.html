@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>글쓰기</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2 class="mb-4">글쓰기</h2>
+
+    <form th:action="@{/board/write}" th:object="${postForm}" method="post" enctype="multipart/form-data">
+        <!-- 카테고리 선택 -->
+        <div class="mb-3">
+            <label for="categoryId" class="form-label">카테고리</label>
+            <select class="form-select" id="categoryId" th:field="*{categoryId}" required>
+                <option value="">카테고리를 선택하세요</option>
+                <option value="2">취업고민</option>
+                <option value="3">이직상담</option>
+                <option value="4">스터디</option>
+                <option value="5">자유게시판</option>
+            </select>
+        </div>
+
+        <!-- 제목 -->
+        <div class="mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" required
+                   th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}"
+                 th:errors="*{title}">제목 오류</div>
+        </div>
+
+        <!-- 내용 -->
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" th:field="*{content}" rows="10" required
+                      th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'"></textarea>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}"
+                 th:errors="*{content}">내용 오류</div>
+        </div>
+
+        <!-- 태그 -->
+        <div class="mb-3">
+            <label for="tags" class="form-label">태그</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="tagInput" placeholder="태그를 입력하고 Enter를 누르세요">
+                <button class="btn btn-outline-secondary" type="button" onclick="addTag()">추가</button>
+            </div>
+            <div id="tagContainer" class="mt-2"></div>
+        </div>
+
+        <!-- 이미지 업로드 -->
+        <div class="mb-3">
+            <label for="images" class="form-label">이미지 첨부</label>
+            <input type="file" class="form-control" id="images" name="images" multiple
+                   accept="image/*" onchange="previewImages(event)">
+            <div id="imagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">등록</button>
+            <a href="/board" class="btn btn-secondary">취소</a>
+        </div>
+    </form>
+</div>
+
+<!-- 부트스트랩 및 커스텀 스크립트 -->
+<th:block layout:fragment="script">
+    <script>
+        // 태그 관리
+        const tags = new Set();
+        const tagInput = document.getElementById('tagInput');
+        const tagContainer = document.getElementById('tagContainer');
+
+        tagInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addTag();
+            }
+        });
+
+        function addTag() {
+            const tag = tagInput.value.trim();
+            if (tag && !tags.has(tag)) {
+                tags.add(tag);
+                updateTagDisplay();
+                tagInput.value = '';
+            }
+        }
+
+        function removeTag(tag) {
+            tags.delete(tag);
+            updateTagDisplay();
+        }
+
+        function updateTagDisplay() {
+            tagContainer.innerHTML = '';
+            tags.forEach(tag => {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-primary me-2';
+                badge.innerHTML = `${tag} <i class="bi bi-x" onclick="removeTag('${tag}')"></i>`;
+                tagContainer.appendChild(badge);
+
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'tags';
+                input.value = tag;
+                tagContainer.appendChild(input);
+            });
+        }
+
+        // 이미지 미리보기
+        function previewImages(event) {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = '';
+            const files = event.target.files;
+
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'position-relative';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" class="img-thumbnail" style="height: 100px">
+                            <button type="button" class="btn-close position-absolute top-0 end-0"
+                                    onclick="this.parentElement.remove()"></button>
+                        `;
+                        preview.appendChild(div);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+    </script>
+</th:block>
+
+<!-- 부트스트랩 아이콘 및 커스텀 스타일 -->
+<th:block layout:fragment="css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .badge i { cursor: pointer; }
+        #imagePreview img { object-fit: cover; }
+    </style>
+</th:block>
+</body>
+</html>

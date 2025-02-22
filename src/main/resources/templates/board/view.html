@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>게시글 보기</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- 게시글 헤더 -->
+    <div class="post-header mb-4">
+        <h2 th:text="${post.title}">제목</h2>
+        <div class="post-info text-muted">
+            <span th:text="${post.authorName}">작성자</span> |
+            <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span> |
+            <span>조회 <span th:text="${post.viewCount}">0</span></span> |
+            <span>좋아요 <span th:text="${post.likeCount}">0</span></span>
+        </div>
+        <div class="tags mt-2" th:if="${!post.tags.empty}">
+            <span class="badge bg-info me-1" th:each="tag : ${post.tags}" th:text="${tag}">태그</span>
+        </div>
+    </div>
+
+    <!-- 게시글 내용 -->
+    <div class="post-content mb-4">
+        <div class="content-text" th:utext="${post.content}">
+            내용
+        </div>
+
+        <!-- 이미지 갤러리 -->
+        <div class="image-gallery mt-3" th:if="${!post.imageUrls.empty}">
+            <div class="row g-3">
+                <div class="col-md-4" th:each="imageUrl : ${post.imageUrls}">
+                    <a th:href="${imageUrl}" target="_blank">
+                        <img th:src="${imageUrl}" class="img-fluid rounded" alt="첨부 이미지">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 좋아요/공유 버튼 -->
+    <div class="post-actions mb-4">
+        <button class="btn btn-outline-primary me-2" onclick="likePost()">
+            <i class="bi bi-heart"></i> 좋아요
+        </button>
+        <button class="btn btn-outline-secondary" onclick="sharePost()">
+            <i class="bi bi-share"></i> 공유하기
+        </button>
+    </div>
+
+    <!-- 댓글 섹션 -->
+    <div class="comments-section">
+        <h4>댓글 <span th:text="${post.commentCount}">0</span></h4>
+        
+        <!-- 댓글 작성 폼 -->
+        <form id="commentForm" class="mb-4">
+            <div class="mb-3">
+                <textarea class="form-control" id="commentContent" rows="3" 
+                          placeholder="댓글을 작성하세요"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">댓글 작성</button>
+        </form>
+
+        <!-- 댓글 목록 -->
+        <div id="commentsList">
+            <!-- 댓글은 JavaScript로 동적 로드 -->
+        </div>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="text-center mt-4">
+        <a href="/board" class="btn btn-secondary">목록</a>
+        <a th:href="@{/board/edit/{id}(id=${post.id})}" 
+           th:if="${#authentication.name == post.authorName}"
+           class="btn btn-primary">수정</a>
+        <button th:if="${#authentication.name == post.authorName}"
+                onclick="deletePost()" class="btn btn-danger">삭제</button>
+    </div>
+</div>
+
+<!-- 부트스트랩 아이콘 및 커스텀 스타일 -->
+<th:block layout:fragment="css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        .post-content img { max-width: 100%; }
+        .image-gallery img { height: 200px; object-fit: cover; }
+    </style>
+</th:block>
+
+<!-- 커스텀 스크립트 -->
+<th:block layout:fragment="script">
+    <script th:inline="javascript">
+        const postId = [[${post.id}]];
+
+        // 좋아요 기능
+        function likePost() {
+            fetch(`/api/posts/${postId}/like`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+        }
+
+        // 공유하기 기능
+        function sharePost() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('링크가 복사되었습니다.');
+            });
+        }
+
+        // 게시글 삭제
+        function deletePost() {
+            if (confirm('정말 삭제하시겠습니까?')) {
+                fetch(`/api/posts/${postId}`, { method: 'DELETE' })
+                    .then(response => {
+                        if (response.ok) {
+                            location.href = '/board';
+                        }
+                    });
+            }
+        }
+
+        // 댓글 로드
+        function loadComments() {
+            fetch(`/api/posts/${postId}/comments`)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsList = document.getElementById('commentsList');
+                    commentsList.innerHTML = comments.map(comment => `
+                        <div class="comment mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>${comment.authorName}</strong>
+                                <small class="text-muted">${formatDate(comment.createdAt)}</small>
+                            </div>
+                            <div>${comment.content}</div>
+                        </div>
+                    `).join('');
+                });
+        }
+
+        // 날짜 포맷팅
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString();
+        }
+
+        // 페이지 로드 시 댓글 로드
+        document.addEventListener('DOMContentLoaded', loadComments);
+
+        // 댓글 작성
+        document.getElementById('commentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const content = document.getElementById('commentContent').value;
+            
+            fetch(`/api/posts/${postId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content })
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('commentContent').value = '';
+                    loadComments();
+                }
+            });
+        });
+    </script>
+</th:block>
+</body>
+</html>

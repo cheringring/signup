@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default}">
+<head>
+    <title>커뮤니티 게시판</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- 게시판 카테고리 -->
+    <div class="board-categories mb-4">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${categoryId == null ? 'active' : ''}"
+                   href="/board">전체</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${categoryId == 2 ? 'active' : ''}"
+                   href="/board?categoryId=2">취업고민</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${categoryId == 3 ? 'active' : ''}"
+                   href="/board?categoryId=3">이직상담</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${categoryId == 4 ? 'active' : ''}"
+                   href="/board?categoryId=4">스터디</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:classappend="${categoryId == 5 ? 'active' : ''}"
+                   href="/board?categoryId=5">자유게시판</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 검색 폼 -->
+    <div class="search-form mb-4">
+        <form action="/board/search" method="get" class="row g-3">
+            <input type="hidden" name="categoryId" th:value="${categoryId}">
+            <div class="col-auto">
+                <select name="searchType" class="form-select">
+                    <option value="content">제목+내용</option>
+                    <option value="author">작성자</option>
+                    <option value="tag">태그</option>
+                </select>
+            </div>
+            <div class="col">
+                <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요"
+                       th:value="${keyword}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">검색</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div class="board-list">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+                <th>조회</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="post : ${posts}">
+                <td th:text="${post.id}">1</td>
+                <td>
+                    <a th:href="@{/board/view/{id}(id=${post.id})}" th:text="${post.title}">제목</a>
+                    <span class="badge bg-secondary" th:if="${post.commentCount > 0}"
+                          th:text="${post.commentCount}">2</span>
+                    <span class="tags" th:if="${!post.tags.empty}">
+                        <span class="badge bg-info" th:each="tag : ${post.tags}" th:text="${tag}">태그</span>
+                    </span>
+                </td>
+                <td th:text="${post.authorName}">작성자</td>
+                <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">2024-02-22</td>
+                <td th:text="${post.viewCount}">0</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 페이징 -->
+    <div class="pagination justify-content-center" th:if="${posts.totalPages > 0}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${!posts.hasPrevious()} ? disabled">
+                <a class="page-link" th:href="@{/board(page=${posts.number - 1}, categoryId=${categoryId})}">이전</a>
+            </li>
+            <li class="page-item" th:each="pageNumber : ${#numbers.sequence(0, posts.totalPages - 1)}"
+                th:classappend="${pageNumber == posts.number} ? active">
+                <a class="page-link" th:href="@{/board(page=${pageNumber}, categoryId=${categoryId})}"
+                   th:text="${pageNumber + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${!posts.hasNext()} ? disabled">
+                <a class="page-link" th:href="@{/board(page=${posts.number + 1}, categoryId=${categoryId})}">다음</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 글쓰기 버튼 -->
+    <div class="text-end mt-3">
+        <a href="/board/write" class="btn btn-primary">글쓰기</a>
+    </div>
+</div>
+
+<!-- 부트스트랩 및 커스텀 스타일 -->
+<th:block layout:fragment="css">
+    <style>
+        .board-categories .nav-link { margin-right: 10px; }
+        .tags { margin-left: 10px; }
+        .tags .badge { margin-right: 5px; }
+    </style>
+</th:block>
+</body>
+</html>

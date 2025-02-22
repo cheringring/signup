@@ -6,6 +6,7 @@
     <title>커뮤니티</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4a90e2;
@@ -13,169 +14,219 @@
             --accent-color: #ff6b6b;
             --text-color: #333;
             --border-radius: 15px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             color: var(--text-color);
             background-color: #f5f7fa;
         }
 
         .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             background: white !important;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .navbar-brand {
             font-weight: 700;
+            font-size: 1.5rem;
+            color: #333 !important;
+            padding: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
             color: var(--primary-color) !important;
         }
 
+        .nav-item {
+            position: relative;
+            margin: 0 0.3rem;
+        }
+
         .nav-link {
+            color: #666 !important;
             font-weight: 500;
-            padding: 0.5rem 1rem !important;
-            margin: 0 0.2rem;
-            border-radius: var(--border-radius);
+            padding: 0.8rem 1.2rem !important;
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
             background-color: var(--primary-color);
-            color: white !important;
+            border-radius: 3px 3px 0 0;
         }
 
         .container {
             max-width: 1200px;
-            padding: 0 20px;
+            padding: 2rem 20px;
         }
 
-        .post-card {
+        .board-header {
             background: white;
-            border: none;
             border-radius: var(--border-radius);
-            padding: 25px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-        }
-
-        .post-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .tag {
-            background-color: var(--secondary-color);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            margin-right: 8px;
-            color: var(--primary-color);
-            font-weight: 500;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-
-        .search-bar {
-            margin: 30px 0;
-            padding: 25px;
-            background-color: white;
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border: none;
-            padding: 8px 20px;
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background-color: #357abd;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(74,144,226,0.3);
-        }
-
-        .btn-outline-primary {
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-            border-radius: var(--border-radius);
-            padding: 6px 15px;
-            font-weight: 500;
-        }
-
-        .btn-outline-primary:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .form-control {
-            border-radius: var(--border-radius);
-            padding: 10px 15px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .form-control:focus {
-            box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
-            border-color: var(--primary-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--box-shadow);
         }
 
         .category-tabs {
             background: white;
-            padding: 15px;
             border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--box-shadow);
         }
 
-        .category-tabs .nav-link {
-            color: #666;
-            font-weight: 500;
-            padding: 8px 20px;
-            margin: 0 5px;
-            border-radius: 20px;
+        .nav-pills .nav-link {
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            margin: 0 0.2rem;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .category-tabs .nav-link.active {
+        .nav-pills .nav-link:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .nav-pills .nav-link.active {
             background-color: var(--primary-color);
-            color: white !important;
+            color: white;
+        }
+
+        .nav-pills .nav-link i {
+            font-size: 1.1rem;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--box-shadow);
+        }
+
+        .search-form {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-form select {
+            min-width: 120px;
+        }
+
+        .btn-write {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-write:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .btn-search {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-search:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .post-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--box-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-category {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
         }
 
         .post-meta {
             color: #666;
-            font-size: 0.9em;
-            margin-bottom: 15px;
-        }
-
-        .post-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
         .post-content {
             color: #555;
-            line-height: 1.6;
-            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
         }
 
         .post-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 15px;
+            padding-top: 1rem;
             border-top: 1px solid #eee;
+            color: #888;
+            font-size: 0.9rem;
         }
 
         .post-stats {
             display: flex;
-            gap: 15px;
-            color: #666;
-            font-size: 0.9em;
+            gap: 1rem;
         }
 
         .post-stats i {
@@ -183,40 +234,35 @@
         }
 
         @media (max-width: 768px) {
-            .search-bar .row > div {
-                margin-bottom: 10px;
-            }
-            
             .container {
-                padding: 0 15px;
+                padding: 1rem;
             }
             
-            .post-card {
-                padding: 20px;
+            .search-form {
+                flex-direction: column;
             }
-
-            .category-tabs {
+            
+            .nav-pills {
+                flex-wrap: nowrap;
                 overflow-x: auto;
-                white-space: nowrap;
-                padding: 10px;
+                padding-bottom: 0.5rem;
             }
-
-            .category-tabs .nav-link {
-                padding: 8px 15px;
-                margin: 0 3px;
+            
+            .nav-pills .nav-link {
+                white-space: nowrap;
             }
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="/home">소곤소곤</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link" href="/company-info">기업 정보</a>
                 </li>
@@ -231,87 +277,110 @@
     </div>
 </nav>
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="font-weight: 700; color: var(--text-color);">커뮤니티</h2>
-        <button class="btn btn-primary">
-            <i class="bi bi-plus-lg"></i> 새 글 작성
-        </button>
+<div class="container">
+    <div class="board-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">커뮤니티</h2>
+            <a href="/board/write" class="btn btn-write">
+                <i class="bi bi-plus-lg"></i> 새 글 작성
+            </a>
+        </div>
     </div>
 
     <div class="category-tabs">
         <ul class="nav nav-pills">
             <li class="nav-item">
-                <a class="nav-link active" href="#">전체</a>
+                <a class="nav-link active" href="/board">
+                    <i class="bi bi-grid"></i> 전체
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">취업고민</a>
+                <a class="nav-link" href="/board?categoryId=2">
+                    <i class="bi bi-people"></i> 취업고민
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">이직상담</a>
+                <a class="nav-link" href="/board?categoryId=3">
+                    <i class="bi bi-briefcase"></i> 이직상담
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">스터디</a>
+                <a class="nav-link" href="/board?categoryId=4">
+                    <i class="bi bi-book"></i> 스터디
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">자유게시판</a>
+                <a class="nav-link" href="/board?categoryId=5">
+                    <i class="bi bi-chat-dots"></i> 자유게시판
+                </a>
             </li>
         </ul>
     </div>
 
-    <div class="search-bar">
-        <div class="row g-3">
-            <div class="col-md-8">
-                <input type="text" class="form-control" placeholder="검색어를 입력하세요">
+    <div class="search-section">
+        <form action="/board/search" method="get" class="search-form">
+            <select name="searchType" class="form-select">
+                <option value="all">전체</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="author">작성자</option>
+                <option value="tag">태그</option>
+            </select>
+            <input type="text" name="keyword" class="form-control" placeholder="검색어를 입력하세요">
+            <button type="submit" class="btn btn-search">
+                <i class="bi bi-search"></i> 검색
+            </button>
+        </form>
+    </div>
+
+    <div class="posts-section">
+        <div class="post-card" th:each="post : ${posts}">
+            <div class="post-category">
+                <i class="bi" th:classappend="${post.categoryId == 2 ? 'bi-people' : 
+                                              post.categoryId == 3 ? 'bi-briefcase' :
+                                              post.categoryId == 4 ? 'bi-book' : 'bi-chat-dots'}"></i>
+                <span th:text="${post.categoryName}">카테고리</span>
             </div>
-            <div class="col-md-4">
-                <button class="btn btn-primary w-100">
-                    <i class="bi bi-search"></i> 검색
-                </button>
+            <h3 class="post-title">
+                <a th:href="@{/board/{id}(id=${post.id})}" th:text="${post.title}">게시글 제목</a>
+                <span class="badge bg-info" th:if="${post.commentCount > 0}" 
+                      th:text="${post.commentCount}">2</span>
+            </h3>
+            <div class="post-meta">
+                <i class="bi bi-person"></i> <span th:text="${post.authorName}">작성자</span> · 
+                <i class="bi bi-clock"></i> <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span>
+            </div>
+            <div class="post-content" th:text="${post.content}">
+                게시글 내용...
+            </div>
+            <div class="post-footer">
+                <div class="post-stats">
+                    <span><i class="bi bi-eye"></i> <span th:text="${post.viewCount}">0</span></span>
+                    <span><i class="bi bi-chat-dots"></i> <span th:text="${post.commentCount}">0</span></span>
+                    <span><i class="bi bi-heart"></i> <span th:text="${post.likeCount}">0</span></span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="post-card">
-        <span class="tag">취업고민</span>
-        <h3 class="post-title">신입 개발자 포트폴리오 어떻게 준비하시나요?</h3>
-        <div class="post-meta">
-            <i class="bi bi-person"></i> 취준생123 · 
-            <i class="bi bi-clock"></i> 2시간 전
-        </div>
-        <div class="post-content">
-            안녕하세요! 현재 신입 개발자 취업 준비 중인데, 포트폴리오를 어떻게 준비하면 좋을지 고민이에요.
-            주로 어떤 프로젝트를 진행하셨는지, 깃허브는 어떻게 관리하시는지 궁금합니다...
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <span><i class="bi bi-eye"></i> 조회 156</span>
-                <span><i class="bi bi-chat-dots"></i> 댓글 8</span>
-                <span><i class="bi bi-heart"></i> 추천 12</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="post-card">
-        <span class="tag">이직상담</span>
-        <h3 class="post-title">3년차 백엔드 개발자 이직 고민</h3>
-        <div class="post-meta">
-            <i class="bi bi-person"></i> 개발자K · 
-            <i class="bi bi-clock"></i> 5시간 전
-        </div>
-        <div class="post-content">
-            현재 중소기업에서 3년째 백엔드 개발자로 일하고 있습니다.
-            최근 이직을 고민하고 있는데, 대기업/스타트업 중 어느 쪽으로 가는 게 좋을까요?
-            각각의 장단점에 대해 조언 부탁드립니다...
-        </div>
-        <div class="post-footer">
-            <div class="post-stats">
-                <span><i class="bi bi-eye"></i> 조회 234</span>
-                <span><i class="bi bi-chat-dots"></i> 댓글 15</span>
-                <span><i class="bi bi-heart"></i> 추천 28</span>
-            </div>
-        </div>
-    </div>
+    <!-- 페이지네이션 -->
+    <nav aria-label="Page navigation" class="mt-4" th:if="${posts.totalPages > 0}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!posts.hasPrevious()} ? disabled">
+                <a class="page-link" th:href="@{/board(page=${posts.number - 1})}" 
+                   th:if="${posts.hasPrevious()}">이전</a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, posts.totalPages - 1)}"
+                th:classappend="${pageNum == posts.number} ? active">
+                <a class="page-link" th:href="@{/board(page=${pageNum})}" 
+                   th:text="${pageNum + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${!posts.hasNext()} ? disabled">
+                <a class="page-link" th:href="@{/board(page=${posts.number + 1})}" 
+                   th:if="${posts.hasNext()}">다음</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
