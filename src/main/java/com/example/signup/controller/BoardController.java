@@ -142,4 +142,18 @@ public class BoardController {
         model.addAttribute("post", PostResponse.from(post));
         return "board/view";
     }
+
+    // 커뮤니티 페이지
+    @GetMapping("/community")
+    public String community(@AuthenticationPrincipal UserEntity user,
+                          @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                          Model model) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        
+        Page<Post> posts = boardService.getPosts(1L, pageable); // 기본적으로 전체 게시판 표시
+        model.addAttribute("posts", posts);
+        return "community";
+    }
 }

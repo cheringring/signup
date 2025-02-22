@@ -23,6 +23,19 @@ spring:
       max-file-size: 10MB
       max-request-size: 50MB
 
+  # 서버 인코딩 설정
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+  # Thymeleaf 설정
+  thymeleaf:
+    encoding: UTF-8
+    mode: HTML
+    cache: false
+
 # 로깅 설정
 logging:
   level:

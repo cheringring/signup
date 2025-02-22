@@ -96,34 +96,43 @@ public class BoardService {
 
     // 카테고리별 게시글 검색
     public Page<Post> searchPosts(Long categoryId, String keyword, String searchType, Pageable pageable) {
-        if ("title".equals(searchType)) {
-            return postRepository.findByBoardCategory_IdAndTitleContaining(categoryId, keyword, pageable);
-        } else if ("content".equals(searchType)) {
-            return postRepository.findByBoardCategory_IdAndContentContaining(categoryId, keyword, pageable);
-        } else if ("author".equals(searchType)) {
-            return postRepository.findByBoardCategory_IdAndAuthor_NicknameContaining(categoryId, keyword, pageable);
-        } else if ("tag".equals(searchType)) {
-            return postRepository.findByBoardCategory_IdAndTags_NameContaining(categoryId, keyword, pageable);
-        } else {
-            // 카테고리 내 제목 + 내용 검색
-            return postRepository.findByBoardCategory_IdAndTitleContainingOrBoardCategory_IdAndContentContaining(
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return postRepository.findByCategory(categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다.")), pageable);
+        }
+
+        switch (searchType.toLowerCase()) {
+            case "title":
+            case "content":
+                return postRepository.findByCategoryIdAndTitleContainingOrCategoryIdAndContentContaining(
+                    categoryId, keyword, categoryId, keyword, pageable);
+            case "author":
+                return postRepository.findByCategoryIdAndAuthorNicknameContaining(categoryId, keyword, pageable);
+            case "tag":
+                return postRepository.findByCategoryIdAndTagsNameContaining(categoryId, keyword, pageable);
+            default:
+                return postRepository.findByCategoryIdAndTitleContainingOrCategoryIdAndContentContaining(
                     categoryId, keyword, categoryId, keyword, pageable);
         }
     }
 
     // 전체 게시글 검색
     public Page<Post> searchAllPosts(String keyword, String searchType, Pageable pageable) {
-        if ("title".equals(searchType)) {
-            return postRepository.findByTitleContaining(keyword, pageable);
-        } else if ("content".equals(searchType)) {
-            return postRepository.findByContentContaining(keyword, pageable);
-        } else if ("author".equals(searchType)) {
-            return postRepository.findByAuthor_NicknameContaining(keyword, pageable);
-        } else if ("tag".equals(searchType)) {
-            return postRepository.findByTags_NameContaining(keyword, pageable);
-        } else {
-            // 전체 검색 (제목 + 내용)
-            return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return postRepository.findAll(pageable);
+        }
+
+        switch (searchType.toLowerCase()) {
+            case "title":
+                return postRepository.findByTitleContaining(keyword, pageable);
+            case "content":
+                return postRepository.findByContentContaining(keyword, pageable);
+            case "author":
+                return postRepository.findByAuthorNicknameContaining(keyword, pageable);
+            case "tag":
+                return postRepository.findByTagsNameContaining(keyword, pageable);
+            default:
+                return postRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         }
     }
 
