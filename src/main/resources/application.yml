@@ -41,3 +41,7 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.hibernate.type: trace
+    com.example.signup: DEBUG
+    org.springframework.web: INFO
+  file:
+    name: ./logs/application.log

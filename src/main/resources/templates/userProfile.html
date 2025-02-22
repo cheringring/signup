@@ -3,51 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필 - 소곤소곤</title>
+    <title>회원정보 - 소곤소곤</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-radius: 15px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .container {
-            margin-top: 50px;
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white !important;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .navbar .container {
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333 !important;
+            margin-right: 48px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .navbar-nav {
+            margin-left: 0;
+        }
+
+        .nav-item {
+            position: relative;
+            margin: 0 0.5rem;
+        }
+
+        .nav-link {
+            color: #666 !important;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 1rem !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .profile-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 800px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+        }
+
+        .profile-avatar i {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+
+        .profile-info h2 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .profile-info p {
+            margin: 0.5rem 0 0;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+
+        .profile-section h3 {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .info-item {
+            display: flex;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .info-label {
+            width: 120px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-value {
+            flex: 1;
+            color: var(--text-color);
+        }
+
+        .btn-edit {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background-color: #357abd;
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-delete:hover {
+            background-color: #ff5252;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">소곤소곤</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/home">홈</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/logout">로그아웃</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/home">소곤소곤</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company-info">회사정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/interview">면접</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community">커뮤니티</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                <div class="profile-info">
+                    <h2 th:text="${user.nickname}">사용자 닉네임</h2>
+                    <p th:text="${user.email}">user@example.com</p>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>기본 정보</h3>
+                <div class="info-item">
+                    <div class="info-label">아이디</div>
+                    <div class="info-value" th:text="${user.userId}">userId</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">닉네임</div>
+                    <div class="info-value" th:text="${user.nickname}">nickname</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">이메일</div>
+                    <div class="info-value" th:text="${user.email}">email</div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3>추가 정보</h3>
+                <div class="info-item">
+                    <div class="info-label">성별</div>
+                    <div class="info-value" th:text="${user.gender == T(com.example.signup.entity.enum_.Gender).MALE ? '남성' : '여성'}">성별</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">지역</div>
+                    <div class="info-value">
+                        <span th:text="${user.province}">도/시</span>
+                        <span th:text="${user.city}">시/군/구</span>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">가입일</div>
+                    <div class="info-value" th:text="${#temporals.format(user.createdAt, 'yyyy년 MM월 dd일')}">2024년 02월 23일</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-edit" onclick="location.href='/edit-profile'">
+                    <i class="bi bi-pencil-square"></i> 정보 수정
+                </button>
+                <button class="btn btn-delete" onclick="confirmDelete()">
+                    <i class="bi bi-trash"></i> 회원 탈퇴
+                </button>
+            </div>
+        </div>
     </div>
-</nav>
 
-<div class="container">
-    <h1>회원정보</h1>
-    <p>사용자 ID: <span th:text="${user.userId}"></span></p>
-    <p>사용자 이름: <span th:text="${user.userName}"></span></p>
-    <p>이메일: <span th:text="${user.email}"></span></p>
-    <p>주소: <span th:text="${user.addr}"></span></p>
-    <p>성별: <span th:text="${user.gender}"></span></p>
-    <p>직업: <span th:text="${user.occupation}"></span></p>
-    <p>흥미: <span th:text="${user.interest}"></span></p>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmDelete() {
+            if (confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                location.href = '/delete-account';
+            }
+        }
+    </script>
 </body>
 </html>

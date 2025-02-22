@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 사용자 서비스 클래스
  */
@@ -31,7 +34,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -57,6 +60,10 @@ public class UserService implements UserDetailsService {
     public UserEntity getUserByUserId(String userId) {
         return userRepository.findByUserId(userId)
             .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+    }
+
+    public Optional<UserEntity> findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
     }
 
     public UserEntity saveNaverUser(UserEntity naverUser) {
@@ -103,7 +110,11 @@ public class UserService implements UserDetailsService {
             return false;
         }
         boolean exists = userRepository.findByUserId(userId).isPresent();
-        System.out.println("Checking userId: " + userId + ", exists: " + exists);
+        logger.info("Checking if user exists - userId: {}, exists: {}", userId, exists);
         return exists;
+    }
+
+    public void deleteUser(Long userIdx) {
+        userRepository.deleteById(userIdx);
     }
 }
