@@ -3,105 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>회원가입</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>회원가입 - 소곤소곤</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
         }
-        .container {
-            margin-top: 50px;
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f6f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .signup-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: none;
+            transition: transform 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+        .navbar {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color)) !important;
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">소곤소곤</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/home">홈</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" href="/login">로그인</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/signup">회원가입</a>
-            </li>
-        </ul>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">소곤소곤</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/home">홈</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">로그인</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/signup">회원가입</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 
-<div class="container">
-    <h1>회원가입</h1>
-    <form id="signupForm" th:action="@{/signup}" th:object="${userCreateForm}" method="post">
-        <div class="form-group">
-            <label for="userId">사용자 ID</label>
-            <input type="text" class="form-control" id="userId" th:field="*{userId}" placeholder="사용자 ID를 입력하세요" required>
-            <div th:if="${#fields.hasErrors('userId')}" class="invalid-feedback" th:errors="*{userId}">사용자 ID 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="userName">사용자 이름</label>
-            <input type="text" class="form-control" id="userName" th:field="*{userName}" placeholder="사용자 이름을 입력하세요" required>
-            <div th:if="${#fields.hasErrors('userName')}" class="invalid-feedback" th:errors="*{userName}">사용자 이름 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="email">이메일</label>
-            <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="이메일을 입력하세요" required>
-            <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}">이메일 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="비밀번호를 입력하세요" required>
-            <div th:if="${#fields.hasErrors('password')}" class="invalid-feedback" th:errors="*{password}">비밀번호 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="confirmPassword">비밀번호 확인</label>
-            <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" placeholder="비밀번호를 다시 입력하세요" required>
-            <div th:if="${#fields.hasErrors('confirmPassword')}" class="invalid-feedback" th:errors="*{confirmPassword}">비밀번호 확인 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="gender">성별</label>
-            <select class="form-control" id="gender" th:field="*{gender}" required>
-                <option value="">성별을 선택하세요.</option>
-                <option value="MALE">남성</option>
-                <option value="FEMALE">여성</option>
-                <option value="OTHER">기타</option>
-            </select>
-            <div th:if="${#fields.hasErrors('gender')}" class="invalid-feedback" th:errors="*{gender}">성별 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="addr">주소</label>
-            <input type="text" class="form-control" id="addr" th:field="*{addr}" placeholder="주소를 입력하세요" required>
-            <div th:if="${#fields.hasErrors('addr')}" class="invalid-feedback" th:errors="*{addr}">주소 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="occupation">직업</label>
-            <input type="text" class="form-control" id="occupation" th:field="*{occupation}" placeholder="직업을 입력하세요" required>
-            <div th:if="${#fields.hasErrors('occupation')}" class="invalid-feedback" th:errors="*{occupation}">직업 오류</div>
-        </div>
-        <div class="form-group">
-            <label for="interest">흥미</label>
-            <input type="text" class="form-control" id="interest" th:field="*{interest}" placeholder="흥미를 입력하세요" required>
-            <div th:if="${#fields.hasErrors('interest')}" class="invalid-feedback" th:errors="*{interest}">흥미 오류</div>
-        </div>
-        <button type="submit" class="btn btn-primary">회원가입</button>
+<div class="container my-5">
+    <div class="signup-container">
+        <h1 class="text-center mb-4">회원가입</h1>
+        <form id="signupForm" th:action="@{/signup}" th:object="${userCreateForm}" method="post">
+            <div class="mb-3">
+                <label for="userId" class="form-label">사용자 ID</label>
+                <input type="text" class="form-control" id="userId" th:field="*{userId}" 
+                       placeholder="사용자 ID를 입력하세요" required>
+                <div th:if="${#fields.hasErrors('userId')}" class="text-danger small mt-1" th:errors="*{userId}">
+                    사용자 ID 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="userName" class="form-label">사용자 이름</label>
+                <input type="text" class="form-control" id="userName" th:field="*{userName}" 
+                       placeholder="사용자 이름을 입력하세요" required>
+                <div th:if="${#fields.hasErrors('userName')}" class="text-danger small mt-1" th:errors="*{userName}">
+                    사용자 이름 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">이메일</label>
+                <input type="email" class="form-control" id="email" th:field="*{email}" 
+                       placeholder="이메일을 입력하세요" required>
+                <div th:if="${#fields.hasErrors('email')}" class="text-danger small mt-1" th:errors="*{email}">
+                    이메일 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">비밀번호</label>
+                <input type="password" class="form-control" id="password" th:field="*{password}" 
+                       placeholder="비밀번호를 입력하세요" required>
+                <div th:if="${#fields.hasErrors('password')}" class="text-danger small mt-1" th:errors="*{password}">
+                    비밀번호 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">비밀번호 확인</label>
+                <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" 
+                       placeholder="비밀번호를 다시 입력하세요" required>
+                <div th:if="${#fields.hasErrors('confirmPassword')}" class="text-danger small mt-1" th:errors="*{confirmPassword}">
+                    비밀번호 확인 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="gender" class="form-label">성별</label>
+                <select class="form-control" id="gender" th:field="*{gender}" required>
+                    <option value="">성별을 선택하세요.</option>
+                    <option value="MALE">남성</option>
+                    <option value="FEMALE">여성</option>
+                    <option value="OTHER">기타</option>
+                </select>
+                <div th:if="${#fields.hasErrors('gender')}" class="text-danger small mt-1" th:errors="*{gender}">
+                    성별 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="addr" class="form-label">주소</label>
+                <input type="text" class="form-control" id="addr" th:field="*{addr}" 
+                       placeholder="주소를 입력하세요" required>
+                <div th:if="${#fields.hasErrors('addr')}" class="text-danger small mt-1" th:errors="*{addr}">
+                    주소 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="occupation" class="form-label">직업</label>
+                <input type="text" class="form-control" id="occupation" th:field="*{occupation}" 
+                       placeholder="직업을 입력하세요" required>
+                <div th:if="${#fields.hasErrors('occupation')}" class="text-danger small mt-1" th:errors="*{occupation}">
+                    직업 오류
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="interest" class="form-label">흥미</label>
+                <input type="text" class="form-control" id="interest" th:field="*{interest}" 
+                       placeholder="흥미를 입력하세요" required>
+                <div th:if="${#fields.hasErrors('interest')}" class="text-danger small mt-1" th:errors="*{interest}">
+                    흥미 오류
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">회원가입</button>
 
-        <!-- 에러 메시지 표시 -->
-        <div th:if="${error}" class="alert alert-danger" role="alert">
-            <p th:text="${error}"></p>
-        </div>
-    </form>
+            <!-- 에러 메시지 표시 -->
+            <div th:if="${error}" class="alert alert-danger mt-3" role="alert">
+                <p th:text="${error}"></p>
+            </div>
+        </form>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Bootstrap 5 JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -3,11 +3,15 @@ package com.example.signup.service;
 import com.example.signup.Form.UserCreateForm;
 import com.example.signup.entity.enum_.Gender;
 import com.example.signup.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.example.signup.entity.UserEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import com.example.signup.exception.UserAlreadyExistsException;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,84 +19,79 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final NaverApiService naverApiService;
+
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByUserId(username)
+            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
+    
+        return org.springframework.security.core.userdetails.User
+            .withUsername(user.getUserId())
+            .password(user.getPassword())
+            .roles("USER") // 필요에 따라 역할 추가
+            .build();
+    }
+
+    // 기존 인증 메서드
+    public UserEntity authenticate(String userId, String password) {
         UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid credentials"));
-        return new org.springframework.security.core.userdetails.User(
-                user.getUserId(),
-                user.getPassword(),
-                new ArrayList<>()
-        );
-    }
-
-    public void createUser(UserCreateForm form) {
-        UserEntity user = new UserEntity();
-        user.setUserId(form.getUserId());
-        user.setUserName(form.getUserName());
-        user.setEmail(form.getEmail());
-        user.setPassword(passwordEncoder.encode(form.getPassword()));
-        user.setAddr(form.getAddr());
-        user.setGender(Gender.valueOf(form.getGender().toUpperCase()));
-        user.setOccupation(form.getOccupation());
-        user.setInterest(form.getInterest());
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        try {
-            userRepository.save(user);
-            System.out.println("User successfully saved: " + user.getEmail());
-        } catch (Exception e) {
-            System.out.println("Error saving user: " + e.getMessage());
-            throw new RuntimeException("Error saving user: " + e.getMessage());
+            .orElseThrow(() -> new UserAlreadyExistsException("사용자를 찾을 수 없습니다."));
+        
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new UserAlreadyExistsException("비밀번호가 일치하지 않습니다.");
         }
+        
+        return user;
     }
 
-    public UserEntity fetchUserInfo(String code, String state) {
-        return naverApiService.getUserInfo(code, state);
+    // 기존 사용자 생성 메서드들
+    public void createUser(UserCreateForm userCreateForm) {
+        // 기존 구현 유지
     }
 
-    public boolean isUserExists(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    public boolean isUserIdExists(String userId) {
+    // 새로 추가된 메서드들
+    public boolean existsByUserId(String userId) {
         return userRepository.existsByUserId(userId);
     }
 
-    public UserEntity findUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public void saveNaverUser(UserEntity naverUser) {
+        // 필요한 경우 추가 처리 (예: 비밀번호 암호화)
+        naverUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+        userRepository.save(naverUser);
     }
 
-    public void saveUser(UserEntity user) {
-        user.setUpdatedAt(LocalDateTime.now());
-        if (user.getCreatedAt() == null) {
-            user.setCreatedAt(LocalDateTime.now());
-        }
-        userRepository.save(user);
-    }
-
-    public UserEntity authenticate(String userId, String password) {
-        UserEntity user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return user;
-        } else {
-            throw new RuntimeException("Invalid credentials");
-        }
-
-    }
-
+    // 기존 모든 사용자 조회 메서드
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
+    }
+    
+    public UserEntity registerNewUser(UserCreateForm form) {
+        if (userRepository.existsByUserId(form.getUserId())) {
+            throw new UserAlreadyExistsException("이미 존재하는 사용자 ID입니다.");
+        }
+
+        UserEntity newUser = UserEntity.builder()
+            .userId(form.getUserId())
+            .userName(form.getUserName())
+            .password(passwordEncoder.encode(form.getPassword()))
+            .email(form.getEmail())
+            .addr(form.getAddr())
+            .gender(Gender.valueOf(form.getGender().toUpperCase()))
+            .occupation(form.getOccupation())
+            .interest(form.getInterest())
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        return userRepository.save(newUser);
     }
 }

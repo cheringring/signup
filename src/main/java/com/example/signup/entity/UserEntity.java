@@ -28,7 +28,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String userName;
 
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -39,10 +39,8 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
     private String occupation;
 
-    @Column(nullable = false)
     private String interest;
 
     private LocalDateTime createdAt;
@@ -50,4 +48,3 @@ public class UserEntity {
 
 
 }
-
