@@ -6,7 +6,7 @@
     <title>회원가입 - 소곤소곤</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/css/common.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4a90e2;
@@ -14,10 +14,11 @@
             --accent-color: #ff6b6b;
             --text-color: #333;
             --border-radius: 15px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             color: var(--text-color);
             background-color: #f5f7fa;
             min-height: 100vh;
@@ -26,26 +27,61 @@
         }
 
         .navbar {
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             background: white !important;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .navbar .container {
+            padding: 0.5rem 1rem;
         }
 
         .navbar-brand {
+            font-size: 24px;
             font-weight: 700;
+            color: #333 !important;
+            margin-right: 48px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
             color: var(--primary-color) !important;
         }
 
+        .navbar-nav {
+            margin-left: 0;
+        }
+
+        .nav-item {
+            position: relative;
+            margin: 0 0.5rem;
+        }
+
         .nav-link {
+            color: #666 !important;
+            font-size: 16px;
             font-weight: 500;
-            padding: 0.5rem 1rem !important;
-            margin: 0 0.2rem;
-            border-radius: var(--border-radius);
+            padding: 1rem !important;
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
             background-color: var(--primary-color);
-            color: white !important;
+            border-radius: 3px 3px 0 0;
         }
 
         .signup-container {
@@ -54,7 +90,7 @@
             padding: 30px;
             background: white;
             border-radius: var(--border-radius);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            box-shadow: var(--box-shadow);
         }
 
         .signup-header {
@@ -206,6 +242,41 @@
             display: block;
         }
 
+        .btn-check {
+            padding: 4px 12px;
+            font-size: 14px;
+            height: 32px;
+            min-width: 80px;
+        }
+
+        .btn-outline-primary {
+            padding: 8px 20px;
+            font-size: 16px;
+            height: 48px;
+            min-width: 140px;
+            border-radius: 4px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .input-group .form-control {
+            flex: 1;
+            height: 48px;
+            font-size: 16px;
+            padding: 8px 16px;
+        }
+
+        .input-group .btn-outline-primary {
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+        }
+
         @media (max-width: 768px) {
             .signup-container {
                 margin: 20px;
@@ -219,16 +290,16 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="/home">소곤소곤</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/company-info">기업 정보</a>
+                    <a class="nav-link" href="/company">기업 정보</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/interview">면접 후기</a>
@@ -345,11 +416,10 @@
                     <option value="제주특별자치도">제주특별자치도</option>
                 </select>
             </div>
-
             <div class="mb-3">
                 <label for="city" class="form-label">시/군/구</label>
-                <select class="form-select" id="city" th:field="*{city}">
-                    <option value="">도/시를 먼저 선택하세요</option>
+                <select class="form-select" id="city" th:field="*{city}" disabled>
+                    <option value="">선택하세요</option>
                 </select>
             </div>
 
@@ -522,22 +592,41 @@ document.getElementById('nickname').addEventListener('input', function() {
     document.getElementById('nicknameSuccess').style.display = 'none';
 });
 
-const cityData = {
+const cityMap = {
     '서울특별시': ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구', '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구'],
-    '경기도': ['수원시', '성남시', '의정부시', '안양시', '부천시', '광명시', '평택시', '동두천시', '안산시', '고양시', '과천시', '구리시', '남양주시', '오산시', '시흥시', '군포시', '의왕시', '하남시', '용인시', '파주시', '이천시', '안성시', '김포시', '화성시', '광주시', '양주시', '포천시', '여주시', '연천군', '가평군', '양평군'],
-    // 다른 도시들의 데이터도 추가해야 합니다
+    '부산광역시': ['강서구', '금정구', '남구', '동구', '동래구', '부산진구', '북구', '사상구', '사하구', '서구', '수영구', '연제구', '영도구', '중구', '해운대구', '기장군'],
+    '대구광역시': ['남구', '달서구', '동구', '북구', '서구', '수성구', '중구', '달성군'],
+    '인천광역시': ['계양구', '남동구', '동구', '미추홀구', '부평구', '서구', '연수구', '중구', '강화군', '옹진군'],
+    '광주광역시': ['광산구', '남구', '동구', '북구', '서구'],
+    '대전광역시': ['대덕구', '동구', '서구', '유성구', '중구'],
+    '울산광역시': ['남구', '동구', '북구', '중구', '울주군'],
+    '세종특별자치시': ['세종시'],
+    '경기도': ['고양시', '과천시', '광명시', '광주시', '구리시', '군포시', '김포시', '남양주시', '동두천시', '부천시', '성남시', '수원시', '시흥시', '안산시', '안성시', '안양시', '양주시', '오산시', '용인시', '의왕시', '의정부시', '이천시', '파주시', '평택시', '포천시', '하남시', '화성시', '가평군', '양평군', '여주군', '연천군'],
+    '강원도': ['강릉시', '동해시', '삼척시', '속초시', '원주시', '춘천시', '태백시', '고성군', '양구군', '양양군', '영월군', '인제군', '정선군', '철원군', '평창군', '홍천군', '화천군', '횡성군'],
+    '충청북도': ['제천시', '청주시', '충주시', '괴산군', '단양군', '보은군', '영동군', '옥천군', '음성군', '증평군', '진천군'],
+    '충청남도': ['계룡시', '공주시', '논산시', '보령시', '서산시', '아산시', '천안시', '금산군', '부여군', '서천군', '연기군', '예산군', '청양군', '태안군', '홍성군'],
+    '전라북도': ['군산시', '김제시', '남원시', '익산시', '전주시', '정읍시', '고창군', '무주군', '부안군', '순창군', '완주군', '임실군', '장수군', '진안군'],
+    '전라남도': ['광양시', '나주시', '목포시', '순천시', '여수시', '강진군', '고흥군', '곡성군', '구례군', '담양군', '무안군', '보성군', '신안군', '영광군', '영암군', '완도군', '장성군', '장흥군', '진도군', '함평군', '해남군', '화순군'],
+    '경상북도': ['경산시', '경주시', '구미시', '김천시', '문경시', '상주시', '안동시', '영주시', '영천시', '포항시', '고령군', '군위군', '봉화군', '성주군', '영덕군', '영양군', '예천군', '울릉군', '울진군', '의성군', '청도군', '청송군', '칠곡군'],
+    '경상남도': ['거제시', '김해시', '마산시', '밀양시', '사천시', '양산시', '진주시', '진해시', '창원시', '통영시', '거창군', '고성군', '남해군', '산청군', '의령군', '창녕군', '하동군', '함안군', '함양군', '합천군'],
+    '제주특별자치도': ['제주시', '서귀포시']
 };
 
 function updateCities() {
-    const province = $('#province').val();
-    const citySelect = $('#city');
-    citySelect.empty();
-    citySelect.append('<option value="">선택하세요</option>');
+    const province = document.getElementById('province').value;
+    const citySelect = document.getElementById('city');
+    citySelect.innerHTML = '<option value="">선택하세요</option>';
     
-    if (province && cityData[province]) {
-        cityData[province].forEach(city => {
-            citySelect.append(`<option value="${city}">${city}</option>`);
+    if (province && cityMap[province]) {
+        cityMap[province].forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
         });
+        citySelect.disabled = false;
+    } else {
+        citySelect.disabled = true;
     }
 }
 
