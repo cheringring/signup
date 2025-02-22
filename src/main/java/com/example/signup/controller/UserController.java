@@ -140,7 +140,7 @@ public class UserController {
                                   SecurityContextHolder.getContext());
                 
                 session.setAttribute("user", existingUser);
-                return "redirect:/home";
+                return "redirect:/naver-success";
             }
             
             // 새로운 사용자라면 추가 정보 입력 페이지로 이동
@@ -152,6 +152,16 @@ public class UserController {
             model.addAttribute("error", "네이버 로그인 중 오류가 발생했습니다: " + e.getMessage());
             return "login_form";
         }
+    }
+
+    @GetMapping("/naver-success")
+    public String naverLoginSuccess(Model model, HttpSession session) {
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        return "naver_login_success";
     }
 
     @GetMapping("/social/signup")

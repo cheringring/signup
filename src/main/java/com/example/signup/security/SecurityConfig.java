@@ -24,7 +24,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/signup", "/login", "/naver/callback", "/login/naver", 
-                               "/social/**", "/css/**", "/js/**", "/error").permitAll()
+                               "/social/**", "/css/**", "/js/**", "/error", "/naver-success").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
