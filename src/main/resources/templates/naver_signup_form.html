@@ -163,7 +163,7 @@ function checkNickname() {
         data: { nickname: nickname },
         success: function(response) {
             console.log('Nickname check response:', response);  // 디버깅용 로그
-            if (response && response.available === true) {
+            if (response && response.exists === false) {
                 $('#nicknameStatus').text('사용 가능한 닉네임입니다.').css('color', 'green');
                 isNicknameChecked = true;
             } else {
@@ -194,7 +194,7 @@ function checkUserId() {
         data: { userId: userId },
         success: function(response) {
             console.log('UserId check response:', response);
-            if (response && response.available === true) {
+            if (response && response.exists === false) {
                 $('#userIdStatus').text('사용 가능한 아이디입니다.').css('color', 'green');
                 isUserIdChecked = true;
             } else {

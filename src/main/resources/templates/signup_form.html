@@ -367,7 +367,7 @@ function checkUserId() {
     
     $.get('/api/check-userid?userId=' + encodeURIComponent(userId))
         .done(function(response) {
-            if (response.available) {
+            if (!response.exists) {
                 $('#userIdStatus').text('사용 가능한 아이디입니다.').css('color', 'green');
                 isUserIdChecked = true;
             } else {
@@ -390,7 +390,7 @@ function checkNickname() {
     
     $.get('/api/check-nickname?nickname=' + encodeURIComponent(nickname))
         .done(function(response) {
-            if (response.available) {
+            if (!response.exists) {
                 $('#nicknameStatus').text('사용 가능한 닉네임입니다.').css('color', 'green');
                 isNicknameChecked = true;
             } else {

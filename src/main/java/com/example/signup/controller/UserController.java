@@ -238,14 +238,14 @@ public class UserController {
     @GetMapping("/api/check-userid")
     @ResponseBody
     public Map<String, Boolean> checkUserId(@RequestParam String userId) {
-        boolean isAvailable = !userService.existsByUserId(userId);
-        return Collections.singletonMap("available", isAvailable);
+        boolean exists = userService.existsByUserId(userId);
+        return Collections.singletonMap("exists", exists);
     }
 
     @GetMapping("/api/check-nickname")
     @ResponseBody
     public Map<String, Boolean> checkNickname(@RequestParam String nickname) {
-        boolean isAvailable = !userService.existsByNickname(nickname);
-        return Collections.singletonMap("available", isAvailable);
+        boolean exists = userService.existsByNickname(nickname);
+        return Collections.singletonMap("exists", exists);
     }
 }

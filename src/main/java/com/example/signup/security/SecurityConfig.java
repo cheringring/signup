@@ -27,7 +27,7 @@ public class SecurityConfig {
                     "/interview", "/community", "/company-info", "/error",
                     "/home", "/login-form", "/naver-login-success",
                     "/naver-signup-form", "/signup-form", "/signup-success",
-                    "/social-signup", "/user-profile"
+                    "/social-signup", "/user-profile", "/api/**"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
