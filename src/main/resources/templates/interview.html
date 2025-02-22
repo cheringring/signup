@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>면접 후기 & 자소서</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+        }
+        .review-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .tag {
+            background-color: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            margin-right: 5px;
+        }
+        .search-bar {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/home">소곤소곤</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company-info">기업 정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/interview">면접 후기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community">커뮤니티</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>면접 후기 & 자소서</h2>
+            <button class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> 새 글 작성
+            </button>
+        </div>
+
+        <div class="search-bar">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="기업명">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option>전체</option>
+                        <option>면접 후기</option>
+                        <option>자소서</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option>최신순</option>
+                        <option>추천순</option>
+                        <option>조회순</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100">검색</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <div class="d-flex justify-content-between">
+                <h4>네이버 백엔드 개발자 최종 합격 후기</h4>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-heart"></i> 좋아요 42
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm ms-2">
+                        <i class="bi bi-bookmark"></i> 스크랩
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <span class="tag">면접후기</span>
+                <span class="tag">네이버</span>
+                <span class="tag">백엔드</span>
+            </div>
+            <p class="text-muted">작성자: 김OO | 작성일: 2024.02.20 | 조회수: 1,234</p>
+            <p class="preview-text">1차 기술면접에서는 주로 자바와 스프링에 대한 질문이 많았습니다. JVM 동작방식과 GC에 대해 깊이있게 물어보셨고...</p>
+            <div class="text-end">
+                <a href="#" class="btn btn-link">더 읽기</a>
+            </div>
+        </div>
+
+        <div class="review-card">
+            <div class="d-flex justify-content-between">
+                <h4>카카오 합격 자소서 공유</h4>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-heart"></i> 좋아요 38
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm ms-2">
+                        <i class="bi bi-bookmark"></i> 스크랩
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3">
+                <span class="tag">자소서</span>
+                <span class="tag">카카오</span>
+                <span class="tag">신입</span>
+            </div>
+            <p class="text-muted">작성자: 이OO | 작성일: 2024.02.19 | 조회수: 956</p>
+            <p class="preview-text">1. 본인이 가장 열정적으로 임했던 프로젝트에 대해 서술해주세요. (1000자)</p>
+            <div class="text-end">
+                <a href="#" class="btn btn-link">더 읽기</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

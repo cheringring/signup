@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>기업 정보 게시판</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+        }
+        .search-bar {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        .company-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .filter-section {
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/home">소곤소곤</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/company-info">기업 정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/interview">면접 후기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community">커뮤니티</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="search-bar">
+            <div class="row">
+                <div class="col-md-8">
+                    <input type="text" class="form-control" placeholder="기업명 검색...">
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100">검색</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="filter-section">
+                    <h5>필터</h5>
+                    <hr>
+                    <h6>업종</h6>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="it">
+                        <label class="form-check-label" for="it">IT/소프트웨어</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="finance">
+                        <label class="form-check-label" for="finance">금융</label>
+                    </div>
+                    <h6 class="mt-3">연봉대</h6>
+                    <select class="form-select">
+                        <option>전체</option>
+                        <option>3000만원 이상</option>
+                        <option>4000만원 이상</option>
+                        <option>5000만원 이상</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="company-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4>네이버</h4>
+                            <p class="text-muted">IT/소프트웨어</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-bookmark"></i> 스크랩
+                        </button>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>평균연봉:</strong> 5000만원</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>기업규모:</strong> 대기업</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>위치:</strong> 성남시 분당구</p>
+                        </div>
+                    </div>
+                    <p class="mt-2">주요 복지: 주 35시간 근무, 자율 출퇴근, 건강검진, 학자금 지원</p>
+                </div>
+
+                <!-- 추가 기업 카드들 -->
+                <div class="company-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h4>카카오</h4>
+                            <p class="text-muted">IT/소프트웨어</p>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-bookmark"></i> 스크랩
+                        </button>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>평균연봉:</strong> 4800만원</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>기업규모:</strong> 대기업</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>위치:</strong> 제주시</p>
+                        </div>
+                    </div>
+                    <p class="mt-2">주요 복지: 유연근무제, 카페테리아 포인트, 의료비 지원</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

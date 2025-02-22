@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>커뮤니티</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+        }
+        .post-card {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .category-badge {
+            background-color: #e9ecef;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-right: 10px;
+        }
+        .search-bar {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+        .comment-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/home">소곤소곤</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company-info">기업 정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/interview">면접 후기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/community">커뮤니티</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>커뮤니티</h2>
+            <button class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> 새 글 작성
+            </button>
+        </div>
+
+        <div class="search-bar">
+            <div class="row">
+                <div class="col-md-4">
+                    <input type="text" class="form-control" placeholder="검색어를 입력하세요">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option>전체 게시판</option>
+                        <option>취업 질문</option>
+                        <option>스터디 모집</option>
+                        <option>취업 고민</option>
+                        <option>자유게시판</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select">
+                        <option>최신순</option>
+                        <option>인기순</option>
+                        <option>댓글순</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100">검색</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <span class="category-badge">취업 질문</span>
+            <div class="d-flex justify-content-between align-items-start mt-2">
+                <div>
+                    <h4>신입 개발자 포트폴리오는 어떻게 준비하나요?</h4>
+                    <p class="text-muted">작성자: 취준생 | 작성일: 2024.02.22 | 조회수: 342</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-heart"></i> 추천 15
+                    </button>
+                </div>
+            </div>
+            <p>안녕하세요, 곧 졸업을 앞둔 취준생입니다. 포트폴리오 준비할 때 어떤 프로젝트를 넣으면 좋을까요?</p>
+            <div class="comment-section">
+                <div class="d-flex justify-content-between">
+                    <small>댓글 5개</small>
+                    <button class="btn btn-link btn-sm">댓글 작성</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="post-card">
+            <span class="category-badge">스터디 모집</span>
+            <div class="d-flex justify-content-between align-items-start mt-2">
+                <div>
+                    <h4>[모집중] 코딩테스트 스터디원 모집합니다</h4>
+                    <p class="text-muted">작성자: 알고리즘마스터 | 작성일: 2024.02.21 | 조회수: 156</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-heart"></i> 추천 8
+                    </button>
+                </div>
+            </div>
+            <p>매주 토요일 오후 2시, 프로그래머스/백준 문제 풀이 스터디 하실 분 모집합니다.</p>
+            <div class="comment-section">
+                <div class="d-flex justify-content-between">
+                    <small>댓글 3개</small>
+                    <button class="btn btn-link btn-sm">댓글 작성</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
