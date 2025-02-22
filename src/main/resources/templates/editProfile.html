@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원정보 수정 - 소곤소곤</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-radius: 15px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white !important;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .navbar .container {
+            padding: 0.5rem 1rem;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333 !important;
+            margin-right: 48px;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .nav-item {
+            position: relative;
+            margin: 0 0.5rem;
+        }
+
+        .nav-link {
+            color: #666 !important;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 1rem !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-color) !important;
+        }
+
+        .profile-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-top: 2rem;
+            max-width: 800px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-image-container {
+            width: 150px;
+            height: 150px;
+            position: relative;
+            margin-right: 2rem;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            box-shadow: var(--box-shadow);
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-image-container i.bi-person {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            color: #adb5bd;
+        }
+
+        .profile-image-upload {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 18px;
+        }
+
+        .profile-image-upload:hover {
+            background: #357abd;
+        }
+
+        .profile-image-upload input {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+        }
+
+        .btn-save {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            background-color: #357abd;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/home">소곤소곤</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/company-info">기업정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/interview">면접후기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community">커뮤니티</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link active" href="/profile">
+                            <i class="bi bi-person-circle"></i>
+                            <span th:text="${session.user.nickname}">회원정보</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${session.user != null}">
+                        <a class="nav-link" href="/logout">로그아웃</a>
+                    </li>
+                    <li class="nav-item" th:if="${session.user == null}">
+                        <a class="nav-link" href="/login">로그인</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="profile-container">
+            <form th:action="@{/edit-profile}" method="post" id="editProfileForm">
+                <div class="profile-header">
+                    <div class="profile-image-container">
+                        <img th:if="${user.profileImage != null}" th:src="${user.profileImage}" alt="프로필 이미지" class="profile-image">
+                        <i th:if="${user.profileImage == null}" class="bi bi-person"></i>
+                        <label class="profile-image-upload" for="profileImageInput">
+                            <i class="bi bi-camera"></i>
+                            <input type="file" id="profileImageInput" accept="image/*" onchange="uploadProfileImage(this)">
+                        </label>
+                    </div>
+                    <h2>회원정보 수정</h2>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">아이디</label>
+                    <input type="text" class="form-control" th:value="${user.userId}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">닉네임</label>
+                    <input type="text" class="form-control" name="nickname" th:value="${user.nickname}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">이메일</label>
+                    <input type="email" class="form-control" th:value="${user.email}" readonly>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">성별</label>
+                    <select class="form-control" name="gender">
+                        <option value="MALE" th:selected="${user.gender == T(com.example.signup.entity.enum_.Gender).MALE}">남성</option>
+                        <option value="FEMALE" th:selected="${user.gender == T(com.example.signup.entity.enum_.Gender).FEMALE}">여성</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">지역</label>
+                    <div class="row">
+                        <div class="col">
+                            <input type="text" class="form-control" name="province" th:value="${user.province}" placeholder="도/시">
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" name="city" th:value="${user.city}" placeholder="시/군/구">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-cancel" onclick="location.href='/profile'">취소</button>
+                    <button type="submit" class="btn btn-save">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function uploadProfileImage(input) {
+            if (input.files && input.files[0]) {
+                const formData = new FormData();
+                formData.append('file', input.files[0]);
+
+                // 로딩 표시
+                const container = document.querySelector('.profile-image-container');
+                container.style.opacity = '0.5';
+
+                fetch('/upload-profile-image', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.querySelector('.profile-image-container');
+                    const existingImage = container.querySelector('img');
+                    const existingIcon = container.querySelector('i.bi-person');
+                    
+                    if (existingImage) {
+                        existingImage.src = data.imageUrl;
+                    } else {
+                        if (existingIcon) {
+                            existingIcon.remove();
+                        }
+                        const img = document.createElement('img');
+                        img.src = data.imageUrl;
+                        img.alt = "프로필 이미지";
+                        img.className = "profile-image";
+                        container.insertBefore(img, container.querySelector('.profile-image-upload'));
+                    }
+                    container.style.opacity = '1';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('프로필 이미지 업로드에 실패했습니다.');
+                    container.style.opacity = '1';
+                });
+            }
+        }
+
+        // 프로필 수정 폼 제출
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/edit-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('프로필이 성공적으로 수정되었습니다.');
+                    window.location.href = '/profile';  // 프로필 페이지로 리다이렉트
+                } else {
+                    throw new Error('프로필 수정에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('프로필 수정에 실패했습니다.');
+            });
+        });
+    </script>
+</body>
+</html>

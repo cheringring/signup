@@ -6,6 +6,7 @@ import com.example.signup.entity.enum_.Gender;
 import com.example.signup.exception.UserAlreadyExistsException;
 import com.example.signup.service.NaverApiService;
 import com.example.signup.service.UserService;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -38,6 +39,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.util.StringUtils;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -108,30 +119,14 @@ public class UserController {
     public String loginWithNaver() {
         logger.info("===== Starting Naver Login Process =====");
         String authorizationUrl = naverApiService.generateAuthorizationUrl();
-        logger.info("Redirecting to Naver authorization URL: {}", authorizationUrl);
-        
+        logger.info("Redirecting to Naver Authorization URL: {}", authorizationUrl);
         return "redirect:" + authorizationUrl;
     }
 
-    @GetMapping("/naver/callback")
-    public String naverCallback(
-        @RequestParam String code, 
-        @RequestParam String state, 
-        Model model,
-        HttpSession session
-    ) {
-        logger.info("===== Naver Login Callback =====");
-        logger.info("Code: {}", code);
-        logger.info("State: {}", state);
-        
+    @GetMapping("/login/naver/callback")
+    public String naverCallback(@RequestParam String code, @RequestParam String state, Model model, HttpSession session) {
         try {
-            // 기존 세션 정보 초기화
-            session.removeAttribute("user");
-            session.removeAttribute("tempNaverUser");
-            session.invalidate();  // 세션 완전히 초기화
-            
-            // 새로운 세션 시작
-            session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession(true);
+            logger.info("Naver callback received - code: {}, state: {}", code, state);
             
             UserEntity naverUser = naverApiService.getUserInfo(code, state);
             logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}", 
@@ -142,29 +137,33 @@ public class UserController {
             logger.info("User exists in database: {}", userExists);
             
             if (!userExists) {
-                logger.info("New user detected. Redirecting to signup form...");
+                // 새로운 사용자인 경우 회원가입 페이지로 이동
                 session.setAttribute("tempNaverUser", naverUser);
-                return "redirect:/social/signup";
+                return "naver_signup_form";
             }
             
-            // 기존 사용자 로그인 처리
+            // 기존 사용자인 경우 로그인 처리
             logger.info("Existing user found. Processing login...");
             UserEntity existingUser = userService.getUserByUserId(naverUser.getUserId());
             
-            // Spring Security 인증 처리
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-            UsernamePasswordAuthenticationToken authentication = 
-                new UsernamePasswordAuthenticationToken(existingUser.getUserId(), null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, 
-                              SecurityContextHolder.getContext());
-            
+            // 세션에 사용자 정보 저장
+            existingUser.setPassword(null); // 보안을 위해 비밀번호 제거
             session.setAttribute("user", existingUser);
-            return "redirect:/naver-success";
+            model.addAttribute("user", existingUser);  // Model에도 user 객체 추가
+            
+            // Spring Security Context 설정
+            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            var authentication = new UsernamePasswordAuthenticationToken(existingUser, null, authorities);
+            var securityContext = new SecurityContextImpl();
+            securityContext.setAuthentication(authentication);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            SecurityContextHolder.setContext(securityContext);
+            
+            return "naver_login_success";
             
         } catch (Exception e) {
-            logger.error("Naver login error", e);
-            model.addAttribute("error", "네이버 로그인 중 오류가 발생했습니다: " + e.getMessage());
+            logger.error("Error during Naver callback processing", e);
+            model.addAttribute("error", "네이버 로그인 처리 중 오류가 발생했습니다: " + e.getMessage());
             return "login_form";
         }
     }
@@ -289,12 +288,12 @@ public class UserController {
     public String deleteNaverAccount(HttpSession session) {
         UserEntity naverUser = (UserEntity) session.getAttribute("naverUser");
         if (naverUser != null) {
-        userService.deleteUser(naverUser.getUser_idx());
-        session.removeAttribute("naverUser");
-        session.removeAttribute("accessToken");
+            userService.deleteUserByIdx(naverUser.getUser_idx());
+            session.removeAttribute("naverUser");
+            session.removeAttribute("accessToken");
+        }
+        return "redirect:/login";
     }
-    return "redirect:/login";
-}
 
     @GetMapping("/api/check-userid")
     @ResponseBody
@@ -318,5 +317,114 @@ public class UserController {
         }
         model.addAttribute("user", user);
         return "userProfile";
+    }
+
+    @GetMapping("/edit-profile")
+    public String showEditProfile(Model model, HttpSession session) {
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        return "editProfile";
+    }
+
+    @PostMapping("/edit-profile")
+    public String updateProfile(@ModelAttribute UserEntity userForm, HttpSession session) {
+        UserEntity currentUser = (UserEntity) session.getAttribute("user");
+        if (currentUser == null) {
+            return "redirect:/login";
+        }
+
+        currentUser.setNickname(userForm.getNickname());
+        currentUser.setProvince(userForm.getProvince());
+        currentUser.setCity(userForm.getCity());
+        currentUser.setGender(userForm.getGender());
+
+        UserEntity updatedUser = userService.updateUser(currentUser);
+        session.setAttribute("user", updatedUser);
+
+        return "redirect:/profile";
+    }
+
+    @PostMapping("/edit-profile")
+    @ResponseBody
+    public ResponseEntity<?> editProfile(@ModelAttribute UserEntity updatedUser, HttpSession session) {
+        try {
+            UserEntity currentUser = (UserEntity) session.getAttribute("user");
+            if (currentUser == null) {
+                return ResponseEntity.status(401).body("User not logged in");
+            }
+
+            // 현재 사용자의 ID를 설정
+            updatedUser.setUser_idx(currentUser.getUser_idx());
+            updatedUser.setUserId(currentUser.getUserId());
+            
+            // 비밀번호는 현재 사용자의 것을 유지
+            updatedUser.setPassword(currentUser.getPassword());
+            
+            // 프로필 이미지는 현재 설정된 것을 유지
+            updatedUser.setProfileImage(currentUser.getProfileImage());
+            
+            // 사용자 정보 업데이트
+            UserEntity savedUser = userService.updateUser(updatedUser);
+            
+            // 세션 업데이트
+            savedUser.setPassword(null); // 보안을 위해 비밀번호 제거
+            session.setAttribute("user", savedUser);
+            
+            return ResponseEntity.ok().build();
+            
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update profile: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload-profile-image")
+    @ResponseBody
+    public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, HttpSession session) {
+        try {
+            UserEntity user = (UserEntity) session.getAttribute("user");
+            if (user == null) {
+                return ResponseEntity.status(401).body("User not logged in");
+            }
+
+            // 파일 저장 경로 설정
+            String uploadDir = "./uploads/profile-images/";
+            Path uploadPath = Paths.get(uploadDir);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // 파일 이름 생성 (UUID 사용)
+            String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+            Path filePath = uploadPath.resolve(fileName);
+
+            // 파일 저장
+            Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // 사용자 프로필 이미지 경로 업데이트
+            user.setProfileImage("/uploads/profile-images/" + fileName);
+            userService.updateUser(user);
+
+            return ResponseEntity.ok().body(Map.of(
+                "imageUrl", user.getProfileImage()
+            ));
+
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to upload image: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/delete-account")
+    public String deleteAccount(HttpSession session) {
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        userService.deleteUser(user.getUserId());
+        session.invalidate();
+        return "redirect:/login";
     }
 }

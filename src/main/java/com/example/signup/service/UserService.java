@@ -114,7 +114,36 @@ public class UserService implements UserDetailsService {
         return exists;
     }
 
-    public void deleteUser(Long userIdx) {
-        userRepository.deleteById(userIdx);
+    public void deleteUser(String userId) {
+        UserEntity user = findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+
+    public void deleteUserByIdx(Long userIdx) {
+        userRepository.findById(userIdx)
+                .ifPresent(user -> userRepository.delete(user));
+    }
+
+    public UserEntity updateUser(UserEntity user) {
+        if (user.getUser_idx() == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        
+        // 기존 사용자가 존재하는지 확인
+        UserEntity existingUser = userRepository.findById(user.getUser_idx())
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + user.getUser_idx()));
+        
+        // 업데이트 시간 설정
+        user.setUpdatedAt(LocalDateTime.now());
+        
+        return userRepository.save(user);
+    }
+
+    public void updateProfileImage(String userId, String imageUrl) {
+        UserEntity user = findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setProfileImage(imageUrl);
+        userRepository.save(user);
     }
 }

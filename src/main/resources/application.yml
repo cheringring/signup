@@ -21,7 +21,7 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
-      max-request-size: 50MB
+      max-request-size: 10MB
 
   # 서버 인코딩 설정
   http:
@@ -45,3 +45,10 @@ logging:
     org.springframework.web: INFO
   file:
     name: ./logs/application.log
+
+# 네이버 API 설정
+naver:
+  api:
+    client-id: WteM7gNGfkJM9lP0SWpl
+    client-secret: knW6aJgVW8
+    redirect-uri: http://localhost:8080/login/naver/callback

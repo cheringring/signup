@@ -23,7 +23,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/", "/signup", "/login", "/naver/callback", "/login/naver",
-                    "/social/**", "/css/**", "/js/**", "/error", "/naver-success",
+                    "/login/naver/callback", "/social/**", "/css/**", "/js/**", "/error", "/naver-success",
                     "/interview", "/community", "/company-info", "/error",
                     "/login-form", "/naver-login-success",
                     "/naver-signup-form", "/signup-form", "/signup-success",
