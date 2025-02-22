@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -27,7 +26,8 @@ public class SecurityConfig {
                     "/interview", "/community", "/company-info", "/error",
                     "/login-form", "/naver-login-success",
                     "/naver-signup-form", "/signup-form", "/signup-success",
-                    "/social-signup", "/user-profile", "/api/**"
+                    "/social-signup", "/user-profile", "/api/**",
+                    "/profile", "/edit-profile", "/upload-profile-image"
                 ).permitAll()
                 .requestMatchers("/home").permitAll()
                 .anyRequest().authenticated()
@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .securityContext(context -> context
+                .requireExplicitSave(true)
                 .securityContextRepository(securityContextRepository())
             );
 

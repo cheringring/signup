@@ -330,24 +330,6 @@ public class UserController {
     }
 
     @PostMapping("/edit-profile")
-    public String updateProfile(@ModelAttribute UserEntity userForm, HttpSession session) {
-        UserEntity currentUser = (UserEntity) session.getAttribute("user");
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
-
-        currentUser.setNickname(userForm.getNickname());
-        currentUser.setProvince(userForm.getProvince());
-        currentUser.setCity(userForm.getCity());
-        currentUser.setGender(userForm.getGender());
-
-        UserEntity updatedUser = userService.updateUser(currentUser);
-        session.setAttribute("user", updatedUser);
-
-        return "redirect:/profile";
-    }
-
-    @PostMapping("/edit-profile")
     @ResponseBody
     public ResponseEntity<?> editProfile(@ModelAttribute UserEntity updatedUser, HttpSession session) {
         try {
