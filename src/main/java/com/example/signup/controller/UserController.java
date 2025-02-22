@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,12 +26,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -182,9 +186,9 @@ public class UserController {
             }
 
             // 기존 정보 유지하면서 새로 입력받은 정보 업데이트
-            tempUser.setOccupation(userForm.getOccupation());
-            tempUser.setInterest(userForm.getInterest());
-            tempUser.setAddr(userForm.getAddr());
+            tempUser.setNickname(userForm.getNickname());
+            tempUser.setProvince(userForm.getProvince());
+            tempUser.setCity(userForm.getCity());
             tempUser.setGender(userForm.getGender());
 
             // 사용자 저장
@@ -229,5 +233,19 @@ public class UserController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+    }
+
+    @GetMapping("/api/check-userid")
+    @ResponseBody
+    public Map<String, Boolean> checkUserId(@RequestParam String userId) {
+        boolean isAvailable = !userService.existsByUserId(userId);
+        return Collections.singletonMap("available", isAvailable);
+    }
+
+    @GetMapping("/api/check-nickname")
+    @ResponseBody
+    public Map<String, Boolean> checkNickname(@RequestParam String nickname) {
+        boolean isAvailable = !userService.existsByNickname(nickname);
+        return Collections.singletonMap("available", isAvailable);
     }
 }

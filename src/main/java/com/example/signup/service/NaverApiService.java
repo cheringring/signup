@@ -109,14 +109,14 @@ public class NaverApiService {
         return UserEntity.builder()
             .userId(response.get("id").asText())
             .userName(response.get("name").asText())
+            .nickname("네이버_" + response.get("id").asText())
             .email(email)
             .password(UUID.randomUUID().toString())
+            .province("미설정")
+            .city("미설정")
+            .gender(gender)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
-            .addr("")
-            .gender(gender)
-            .occupation("")
-            .interest("")
             .build();
     }
 }

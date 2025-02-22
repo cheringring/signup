@@ -19,9 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-
+/**
+ * 사용자 서비스 클래스
+ */
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -32,9 +35,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByUserId(username)
-            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + username));
-    
+        UserEntity user = getUserByUserId(username);
         return org.springframework.security.core.userdetails.User
             .withUsername(user.getUserId())
             .password(user.getPassword())
@@ -44,9 +45,7 @@ public class UserService implements UserDetailsService {
 
     // 기존 인증 메서드
     public UserEntity authenticate(String userId, String password) {
-        UserEntity user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new UserAlreadyExistsException("사용자를 찾을 수 없습니다."));
-        
+        UserEntity user = getUserByUserId(userId);
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new UserAlreadyExistsException("비밀번호가 일치하지 않습니다.");
         }
@@ -54,15 +53,6 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    // 기존 사용자 생성 메서드들
-    public void createUser(UserCreateForm userCreateForm) {
-        // 기존 구현 유지
-    }
-
-    // 새로 추가된 메서드들
-    public boolean existsByUserId(String userId) {
-        return userRepository.findByUserId(userId).isPresent();
-    }
 
     public UserEntity getUserByUserId(String userId) {
         return userRepository.findByUserId(userId)
@@ -85,18 +75,35 @@ public class UserService implements UserDetailsService {
             throw new UserAlreadyExistsException("이미 존재하는 사용자 ID입니다.");
         }
 
+        if (userRepository.existsByNickname(form.getNickname())) {
+            throw new UserAlreadyExistsException("이미 존재하는 닉네임입니다.");
+        }
+
         UserEntity newUser = UserEntity.builder()
             .userId(form.getUserId())
             .userName(form.getUserName())
+            .nickname(form.getNickname())
             .password(passwordEncoder.encode(form.getPassword()))
             .email(form.getEmail())
-            .addr(form.getAddr())
+            .province(form.getProvince())
+            .city(form.getCity())
             .gender(Gender.valueOf(form.getGender().toUpperCase()))
-            .occupation(form.getOccupation())
-            .interest(form.getInterest())
             .createdAt(LocalDateTime.now())
             .build();
 
         return userRepository.save(newUser);
+    }
+
+    public boolean existsByNickname(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+    
+    public boolean existsByUserId(String userId) {
+        if (userId == null || userId.trim().isEmpty()) {
+            return false;
+        }
+        boolean exists = userRepository.findByUserId(userId).isPresent();
+        System.out.println("Checking userId: " + userId + ", exists: " + exists);
+        return exists;
     }
 }
