@@ -253,18 +253,21 @@
                 <div class="input-group">
                     <input type="text" class="form-control" id="userId" th:field="*{userId}" 
                            required
-                           oninput="filterInput(this)">
+                           oninput="filterUserId(this)">
                     <button type="button" class="btn btn-outline-primary" onclick="checkUserId()">중복확인</button>
                 </div>
                 <div class="invalid-feedback" id="userIdError"></div>
                 <div class="valid-feedback" id="userIdSuccess"></div>
-                <small class="form-text text-muted">한글, 영문, 숫자만 사용할 수 있습니다.</small>
+                <small class="form-text text-muted">영문, 숫자만 사용할 수 있습니다.</small>
             </div>
 
             <div class="mb-3">
                 <label for="userName" class="form-label">이름</label>
-                <input type="text" class="form-control" id="userName" th:field="*{userName}" required>
-                <div class="form-text">실명을 입력해주세요.</div>
+                <input type="text" class="form-control" id="userName" th:field="*{userName}"
+                       required
+                       oninput="filterUserName(this)">
+                <div class="invalid-feedback">이름은 필수 항목입니다.</div>
+                <small class="form-text text-muted">한글, 영문만 사용할 수 있습니다.</small>
             </div>
 
             <div class="mb-3">
@@ -370,7 +373,19 @@
 let isUserIdChecked = false;
 let isNicknameChecked = false;
 
-// 한글, 영문, 숫자만 허용하는 필터 함수
+// 영문, 숫자만 허용 (아이디)
+function filterUserId(input) {
+    const regex = /[^A-Za-z0-9]/g;
+    input.value = input.value.replace(regex, '');
+}
+
+// 한글, 영문만 허용 (이름)
+function filterUserName(input) {
+    const regex = /[^A-Za-z\u3131-\u318E\uAC00-\uD7A3]/g;
+    input.value = input.value.replace(regex, '');
+}
+
+// 한글, 영문, 숫자 허용 (닉네임)
 function filterInput(input) {
     const regex = /[^A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]/g;
     input.value = input.value.replace(regex, '');
@@ -383,10 +398,10 @@ function checkUserId() {
         return;
     }
 
-    // 한글, 영문, 숫자 검사
-    const regex = /^[A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]+$/;
+    // 영문, 숫자 검사
+    const regex = /^[A-Za-z0-9]+$/;
     if (!regex.test(userId)) {
-        showUserIdError('아이디는 한글, 영문, 숫자만 사용할 수 있습니다.');
+        showUserIdError('아이디는 영문, 숫자만 사용할 수 있습니다.');
         return;
     }
 

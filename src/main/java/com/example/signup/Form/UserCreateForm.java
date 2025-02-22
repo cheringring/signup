@@ -11,10 +11,11 @@ public class UserCreateForm {
 
     @NotEmpty(message = "아이디는 필수입니다.")
     @Size(min = 3, max = 20, message = "아이디는 3-20자 사이여야 합니다.")
-    @Pattern(regexp = "^[A-Za-z0-9\\u3131-\\u318E\\uAC00-\\uD7A3]+$", message = "아이디는 한글, 영문, 숫자만 사용할 수 있습니다.")
+    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "아이디는 영문, 숫자만 사용할 수 있습니다.")
     private String userId;
 
     @NotEmpty(message = "이름은 필수 항목입니다.")
+    @Pattern(regexp = "^[A-Za-z\\u3131-\\u318E\\uAC00-\\uD7A3]+$", message = "이름은 한글, 영문만 사용할 수 있습니다.")
     private String userName;
 
     @NotEmpty(message = "닉네임은 필수 항목입니다.")
