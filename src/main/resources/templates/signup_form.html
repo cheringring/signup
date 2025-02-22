@@ -196,6 +196,15 @@
             margin-bottom: 5px;
         }
 
+        .valid-feedback {
+            display: none;
+            color: #28a745;
+            font-size: 80%;
+        }
+        .is-valid ~ .valid-feedback {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .signup-container {
                 margin: 20px;
@@ -243,12 +252,12 @@
                 <label for="userId" class="form-label">아이디</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="userId" th:field="*{userId}" 
-                           required pattern="^[a-zA-Z0-9가-힣]+$" 
-                           title="한글, 영문, 숫자만 사용할 수 있습니다"
-                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9가-힣]/g, '')">
+                           required
+                           oninput="filterInput(this)">
                     <button type="button" class="btn btn-outline-primary" onclick="checkUserId()">중복확인</button>
                 </div>
                 <div class="invalid-feedback" id="userIdError"></div>
+                <div class="valid-feedback" id="userIdSuccess"></div>
                 <small class="form-text text-muted">한글, 영문, 숫자만 사용할 수 있습니다.</small>
             </div>
 
@@ -262,12 +271,12 @@
                 <label for="nickname" class="form-label">닉네임</label>
                 <div class="input-group">
                     <input type="text" class="form-control" id="nickname" th:field="*{nickname}" 
-                           required pattern="^[a-zA-Z0-9가-힣]+$" 
-                           title="한글, 영문, 숫자만 사용할 수 있습니다"
-                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9가-힣]/g, '')">
+                           required
+                           oninput="filterInput(this)">
                     <button type="button" class="btn btn-outline-primary" onclick="checkNickname()">중복확인</button>
                 </div>
                 <div class="invalid-feedback" id="nicknameError"></div>
+                <div class="valid-feedback" id="nicknameSuccess"></div>
                 <small class="form-text text-muted">한글, 영문, 숫자만 사용할 수 있습니다.</small>
             </div>
 
@@ -361,6 +370,12 @@
 let isUserIdChecked = false;
 let isNicknameChecked = false;
 
+// 한글, 영문, 숫자만 허용하는 필터 함수
+function filterInput(input) {
+    const regex = /[^A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]/g;
+    input.value = input.value.replace(regex, '');
+}
+
 function checkUserId() {
     const userId = document.getElementById('userId').value;
     if (!userId) {
@@ -368,7 +383,9 @@ function checkUserId() {
         return;
     }
 
-    if (!/^[a-zA-Z0-9가-힣]+$/.test(userId)) {
+    // 한글, 영문, 숫자 검사
+    const regex = /^[A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]+$/;
+    if (!regex.test(userId)) {
         showUserIdError('아이디는 한글, 영문, 숫자만 사용할 수 있습니다.');
         return;
     }
@@ -394,21 +411,23 @@ function checkUserId() {
 function showUserIdError(message) {
     const userIdInput = document.getElementById('userId');
     const errorDiv = document.getElementById('userIdError');
+    const successDiv = document.getElementById('userIdSuccess');
     userIdInput.classList.add('is-invalid');
     userIdInput.classList.remove('is-valid');
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
-    errorDiv.style.color = '#dc3545';
+    successDiv.style.display = 'none';
 }
 
 function showUserIdSuccess(message) {
     const userIdInput = document.getElementById('userId');
     const errorDiv = document.getElementById('userIdError');
+    const successDiv = document.getElementById('userIdSuccess');
     userIdInput.classList.remove('is-invalid');
     userIdInput.classList.add('is-valid');
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    errorDiv.style.color = '#28a745';
+    successDiv.textContent = message;
+    successDiv.style.display = 'block';
+    errorDiv.style.display = 'none';
 }
 
 function checkNickname() {
@@ -418,7 +437,9 @@ function checkNickname() {
         return;
     }
 
-    if (!/^[a-zA-Z0-9가-힣]+$/.test(nickname)) {
+    // 한글, 영문, 숫자 검사
+    const regex = /^[A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]+$/;
+    if (!regex.test(nickname)) {
         showNicknameError('닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.');
         return;
     }
@@ -444,21 +465,23 @@ function checkNickname() {
 function showNicknameError(message) {
     const nicknameInput = document.getElementById('nickname');
     const errorDiv = document.getElementById('nicknameError');
+    const successDiv = document.getElementById('nicknameSuccess');
     nicknameInput.classList.add('is-invalid');
     nicknameInput.classList.remove('is-valid');
     errorDiv.textContent = message;
     errorDiv.style.display = 'block';
-    errorDiv.style.color = '#dc3545';
+    successDiv.style.display = 'none';
 }
 
 function showNicknameSuccess(message) {
     const nicknameInput = document.getElementById('nickname');
     const errorDiv = document.getElementById('nicknameError');
+    const successDiv = document.getElementById('nicknameSuccess');
     nicknameInput.classList.remove('is-invalid');
     nicknameInput.classList.add('is-valid');
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    errorDiv.style.color = '#28a745';
+    successDiv.textContent = message;
+    successDiv.style.display = 'block';
+    errorDiv.style.display = 'none';
 }
 
 function updateSubmitButton() {
@@ -472,6 +495,7 @@ document.getElementById('userId').addEventListener('input', function() {
     updateSubmitButton();
     this.classList.remove('is-invalid', 'is-valid');
     document.getElementById('userIdError').style.display = 'none';
+    document.getElementById('userIdSuccess').style.display = 'none';
 });
 
 document.getElementById('nickname').addEventListener('input', function() {
@@ -479,6 +503,7 @@ document.getElementById('nickname').addEventListener('input', function() {
     updateSubmitButton();
     this.classList.remove('is-invalid', 'is-valid');
     document.getElementById('nicknameError').style.display = 'none';
+    document.getElementById('nicknameSuccess').style.display = 'none';
 });
 
 const cityData = {

@@ -36,6 +36,14 @@
         .is-invalid ~ .invalid-feedback {
             display: block;
         }
+        .valid-feedback {
+            display: none;
+            color: #28a745;
+            font-size: 80%;
+        }
+        .is-valid ~ .valid-feedback {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -56,12 +64,12 @@
                                 <label for="nickname">닉네임</label>
                                 <div class="nickname-group">
                                     <input type="text" class="form-control" id="nickname" th:field="*{nickname}" 
-                                           required pattern="^[a-zA-Z0-9가-힣]+$" 
-                                           title="한글, 영문, 숫자만 사용할 수 있습니다"
-                                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9가-힣]/g, '')">
+                                           required
+                                           oninput="filterInput(this)">
                                     <button type="button" class="btn btn-outline-primary btn-check-nickname" onclick="checkNickname()">중복확인</button>
                                 </div>
                                 <div class="invalid-feedback" id="nicknameError"></div>
+                                <div class="valid-feedback" id="nicknameSuccess"></div>
                                 <small class="form-text text-muted">한글, 영문, 숫자만 사용할 수 있습니다.</small>
                             </div>
                             
@@ -108,6 +116,12 @@
     <script>
         let isNicknameValid = false;
 
+        // 한글, 영문, 숫자만 허용하는 필터 함수
+        function filterInput(input) {
+            const regex = /[^A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]/g;
+            input.value = input.value.replace(regex, '');
+        }
+
         function checkNickname() {
             const nickname = document.getElementById('nickname').value;
             if (!nickname) {
@@ -115,7 +129,9 @@
                 return;
             }
 
-            if (!/^[a-zA-Z0-9가-힣]+$/.test(nickname)) {
+            // 한글, 영문, 숫자 검사
+            const regex = /^[A-Za-z0-9\u3131-\u318E\uAC00-\uD7A3]+$/;
+            if (!regex.test(nickname)) {
                 showNicknameError('닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.');
                 return;
             }
@@ -150,12 +166,12 @@
 
         function showNicknameSuccess(message) {
             const nicknameInput = document.getElementById('nickname');
-            const errorDiv = document.getElementById('nicknameError');
+            const successDiv = document.getElementById('nicknameSuccess');
             nicknameInput.classList.remove('is-invalid');
             nicknameInput.classList.add('is-valid');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            errorDiv.style.color = '#28a745';
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            successDiv.style.color = '#28a745';
         }
 
         function updateSubmitButton() {
@@ -169,6 +185,7 @@
             updateSubmitButton();
             this.classList.remove('is-invalid', 'is-valid');
             document.getElementById('nicknameError').style.display = 'none';
+            document.getElementById('nicknameSuccess').style.display = 'none';
         });
 
         const regionData = {
