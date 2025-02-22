@@ -17,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -65,7 +64,7 @@ public class UserController {
             user.setPassword(null); // 보안을 위해 비밀번호 제거
             session.setAttribute("user", user);
             redirectAttributes.addFlashAttribute("successMessage", "로그인 성공!");
-            return "redirect:/user-home";
+            return "redirect:/home";
         } catch (UserAlreadyExistsException e) {
             model.addAttribute("error", "로그인에 실패하셨습니다. 아이디와 비밀번호를 확인해주세요.");
             return "login_form";
@@ -200,29 +199,35 @@ public class UserController {
             session.removeAttribute("tempNaverUser");
             session.setAttribute("user", savedUser);
             
-            return "redirect:/user-home";
+            return "redirect:/home";
         } catch (Exception e) {
             return "redirect:/social/signup?error";
         }
     }
 
-    @GetMapping("/user-home")
+    @GetMapping("/company-info")
+    public String companyInfo() {
+        return "company_info";
+    }
+
+    @GetMapping("/interview")
+    public String interview() {
+        return "interview";
+    }
+
+    @GetMapping("/community")
+    public String community() {
+        return "community";
+    }
+
+    @GetMapping("/home")
     public String home(Model model, HttpSession session) {
-        Object userObj = session.getAttribute("user");
-        if (userObj instanceof UserEntity) {
-            UserEntity user = (UserEntity) userObj;
-            // 최신 사용자 정보를 데이터베이스에서 가져옴
-            try {
-                UserEntity freshUser = userService.getUser(user.getUserId());
-                model.addAttribute("user", freshUser);
-                return "home";
-            } catch (UsernameNotFoundException e) {
-                // 사용자를 찾을 수 없는 경우
-                session.removeAttribute("user");
-                return "redirect:/login";
-            }
+        UserEntity user = (UserEntity) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
         }
-        return "redirect:/login";
+        model.addAttribute("user", user);
+        return "home";
     }
 
     @GetMapping("/logout")

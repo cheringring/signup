@@ -2,41 +2,59 @@ package com.example.signup.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/", "/signup", "/login", "/naver/callback", "/login/naver",
+                    "/social/**", "/css/**", "/js/**", "/error", "/naver-success",
+                    "/interview", "/community", "/company-info", "/error",
+                    "/home", "/login-form", "/naver-login-success",
+                    "/naver-signup-form", "/signup-form", "/signup-success",
+                    "/social-signup", "/user-profile"
+                ).permitAll()
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/", true)
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/login")
+                .permitAll()
+            )
+            .securityContext(context -> context
+                .securityContextRepository(securityContextRepository())
+            );
+
+        return http.build();
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/", "/home", "/signup/**", "/login/**", "/css/**", "/js/**", "/images/**", "/naver/**").permitAll()
-                .requestMatchers("/user-home").authenticated()
-                .anyRequest().authenticated()
-            )
-            .formLogin((form) -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/user-home")
-                .permitAll()
-            )
-            .logout((logout) -> logout
-                .logoutSuccessUrl("/")
-                .permitAll()
-            );
+    public SecurityContextRepository securityContextRepository() {
+        return new HttpSessionSecurityContextRepository();
+    }
 
-        http.csrf((csrf) -> csrf.disable());
-
-        return http.build();
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

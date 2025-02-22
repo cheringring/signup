@@ -69,11 +69,6 @@ public class UserService implements UserDetailsService {
             .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
     }
 
-    public UserEntity getUser(String userId) {
-        return userRepository.findByUserId(userId)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
-    }
-
     public UserEntity saveNaverUser(UserEntity naverUser) {
         // 필요한 경우 추가 처리 (예: 비밀번호 암호화)
         naverUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
