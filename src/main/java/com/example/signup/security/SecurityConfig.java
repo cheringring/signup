@@ -25,10 +25,11 @@ public class SecurityConfig {
                     "/", "/signup", "/login", "/naver/callback", "/login/naver",
                     "/social/**", "/css/**", "/js/**", "/error", "/naver-success",
                     "/interview", "/community", "/company-info", "/error",
-                    "/home", "/login-form", "/naver-login-success",
+                    "/login-form", "/naver-login-success",
                     "/naver-signup-form", "/signup-form", "/signup-success",
                     "/social-signup", "/user-profile", "/api/**"
                 ).permitAll()
+                .requestMatchers("/home").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form

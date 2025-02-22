@@ -222,10 +222,9 @@ public class UserController {
     @GetMapping("/home")
     public String home(Model model, HttpSession session) {
         UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/login";
+        if (user != null) {
+            model.addAttribute("user", user);
         }
-        model.addAttribute("user", user);
         return "home";
     }
 
