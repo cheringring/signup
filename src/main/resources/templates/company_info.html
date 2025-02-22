@@ -3,47 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>기업 정보 게시판</title>
+    <title>기업 정보</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         :root {
             --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-radius: 15px;
         }
-        .search-bar {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
         }
+
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white !important;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.2rem;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-color);
+            color: white !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
         .company-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 20px;
+            background: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 25px;
             margin-bottom: 20px;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
+
         .company-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-        .filter-section {
-            padding: 15px;
+
+        .company-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+
+        .company-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .company-info {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .tag {
+            background-color: var(--secondary-color);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-right: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .search-bar {
+            margin: 30px 0;
+            padding: 25px;
             background-color: white;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .stats-box {
+            background: var(--secondary-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 15px;
+        }
+
+        .stats-item {
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 8px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74,144,226,0.3);
+        }
+
+        .form-control {
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
+            border-color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .search-bar .row > div {
+                margin-bottom: 10px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .company-card {
+                padding: 20px;
+            }
+
+            .stats-box {
+                margin-top: 10px;
+            }
+
+            .stats-item {
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
         <a class="navbar-brand" href="/home">소곤소곤</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link active" href="/company-info">기업 정보</a>
                 </li>
@@ -59,91 +199,79 @@
 </nav>
 
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight: 700; color: var(--text-color);">기업 정보</h2>
+    </div>
+
     <div class="search-bar">
-        <div class="row">
+        <div class="row g-3">
             <div class="col-md-8">
-                <input type="text" class="form-control" placeholder="기업명 검색...">
+                <input type="text" class="form-control" placeholder="기업명 또는 키워드로 검색">
             </div>
             <div class="col-md-4">
-                <button class="btn btn-primary w-100">검색</button>
+                <button class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> 검색
+                </button>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-3">
-            <div class="filter-section">
-                <h5>필터</h5>
-                <hr>
-                <h6>업종</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="it">
-                    <label class="form-check-label" for="it">IT/소프트웨어</label>
+    <div class="company-card">
+        <img src="https://example.com/naver-logo.png" alt="네이버 로고" class="company-logo">
+        <h3 class="company-name">네이버 (NAVER)</h3>
+        <div class="mb-3">
+            <span class="tag">IT</span>
+            <span class="tag">인터넷</span>
+            <span class="tag">플랫폼</span>
+        </div>
+        <p class="company-info">
+            대한민국 최대 인터넷 기업으로, 검색 포털 네이버를 중심으로 다양한 온라인 서비스를 제공하고 있습니다.
+            클라우드, AI, 로봇 등 미래 기술 분야에도 적극적으로 투자하고 있습니다.
+        </p>
+        <div class="stats-box">
+            <div class="row">
+                <div class="col-4 stats-item">
+                    <div class="stats-number">4.2</div>
+                    <div class="stats-label">평균 평점</div>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="finance">
-                    <label class="form-check-label" for="finance">금융</label>
+                <div class="col-4 stats-item">
+                    <div class="stats-number">156</div>
+                    <div class="stats-label">면접 후기</div>
                 </div>
-                <h6 class="mt-3">연봉대</h6>
-                <select class="form-select">
-                    <option>전체</option>
-                    <option>3000만원 이상</option>
-                    <option>4000만원 이상</option>
-                    <option>5000만원 이상</option>
-                </select>
+                <div class="col-4 stats-item">
+                    <div class="stats-number">89</div>
+                    <div class="stats-label">합격 자소서</div>
+                </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-9">
-            <div class="company-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h4>네이버</h4>
-                        <p class="text-muted">IT/소프트웨어</p>
-                    </div>
-                    <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-bookmark"></i> 스크랩
-                    </button>
+    <div class="company-card">
+        <img src="https://example.com/kakao-logo.png" alt="카카오 로고" class="company-logo">
+        <h3 class="company-name">카카오 (Kakao)</h3>
+        <div class="mb-3">
+            <span class="tag">IT</span>
+            <span class="tag">모바일</span>
+            <span class="tag">플랫폼</span>
+        </div>
+        <p class="company-info">
+            카카오톡을 시작으로 모바일 생활 플랫폼으로 성장한 IT 기업입니다.
+            모빌리티, 커머스, 엔터테인먼트 등 다양한 사업 영역에서 혁신적인 서비스를 제공하고 있습니다.
+        </p>
+        <div class="stats-box">
+            <div class="row">
+                <div class="col-4 stats-item">
+                    <div class="stats-number">4.1</div>
+                    <div class="stats-label">평균 평점</div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>평균연봉:</strong> 5000만원</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>기업규모:</strong> 대기업</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>위치:</strong> 성남시 분당구</p>
-                    </div>
+                <div class="col-4 stats-item">
+                    <div class="stats-number">142</div>
+                    <div class="stats-label">면접 후기</div>
                 </div>
-                <p class="mt-2">주요 복지: 주 35시간 근무, 자율 출퇴근, 건강검진, 학자금 지원</p>
-            </div>
-
-            <!-- 추가 기업 카드들 -->
-            <div class="company-card">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h4>카카오</h4>
-                        <p class="text-muted">IT/소프트웨어</p>
-                    </div>
-                    <button class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-bookmark"></i> 스크랩
-                    </button>
+                <div class="col-4 stats-item">
+                    <div class="stats-number">76</div>
+                    <div class="stats-label">합격 자소서</div>
                 </div>
-                <hr>
-                <div class="row">
-                    <div class="col-md-4">
-                        <p><strong>평균연봉:</strong> 4800만원</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>기업규모:</strong> 대기업</p>
-                    </div>
-                    <div class="col-md-4">
-                        <p><strong>위치:</strong> 제주시</p>
-                    </div>
-                </div>
-                <p class="mt-2">주요 복지: 유연근무제, 카페테리아 포인트, 의료비 지원</p>
             </div>
         </div>
     </div>

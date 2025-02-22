@@ -3,296 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>소곤소곤 - 취업 정보 공유 플랫폼</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <title>소곤소곤 - 개발자 커뮤니티</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <style>
         :root {
-            --primary-color: #03C75A;
-            --secondary-color: #0056b3;
+            --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-radius: 15px;
         }
-        
+
         body {
-            background-color: #f8f9fa;
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
         }
-        
+
         .navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white !important;
         }
-        
+
         .navbar-brand {
+            font-weight: 700;
             color: var(--primary-color) !important;
-            font-weight: bold;
-            font-size: 24px;
         }
-        
-        .search-section {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 60px 0;
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.2rem;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-color);
+            color: white !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .hero-section {
+            background: linear-gradient(45deg, var(--primary-color), #357abd);
+            padding: 80px 0;
             color: white;
+            border-radius: 0 0 30px 30px;
             margin-bottom: 40px;
         }
-        
-        .card {
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            background: white;
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
-            transition: transform 0.3s ease;
+            border-radius: var(--border-radius);
+            padding: 25px;
             margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            height: 100%;
         }
-        
-        .card:hover {
+
+        .feature-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-        
-        .card-icon {
-            font-size: 40px;
+
+        .feature-icon {
+            font-size: 2rem;
             color: var(--primary-color);
-            margin-bottom: 20px;
-        }
-        
-        .feature-title {
-            color: #333;
-            font-weight: bold;
             margin-bottom: 15px;
         }
-        
-        .search-form input {
-            border-radius: 25px;
-            padding: 25px 20px;
-            border: none;
+
+        .feature-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-color);
         }
-        
-        .btn-search {
-            background-color: var(--secondary-color);
-            color: white;
-            border-radius: 25px;
-            padding: 15px 30px;
-            border: none;
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
         }
-        
-        .btn-search:hover {
-            background-color: #004494;
-            color: white;
+
+        .stats-section {
+            background: white;
+            padding: 40px 0;
+            margin: 40px 0;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-        
-        .stats {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-        
+
         .stat-item {
             text-align: center;
-            padding: 15px;
-        }
-        
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .recent-posts {
-            margin-top: 40px;
-        }
-        
-        .post-card {
-            background: white;
             padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 10px;
         }
-        
-        .company-logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 60px 0;
+            background: var(--secondary-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 12px 30px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74,144,226,0.3);
+        }
+
+        .btn-outline-light {
+            border-radius: var(--border-radius);
+            padding: 12px 30px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+                text-align: center;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .feature-card {
+                padding: 20px;
+            }
+
+            .stat-item {
+                margin-bottom: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 네비게이션 바 -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand" href="/home">
-                <i class="fas fa-comments"></i> 소곤소곤
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/companies">기업 정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/interviews">면접 후기</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/community">커뮤니티</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/mypage">마이페이지</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">로그아웃</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 검색 섹션 -->
-    <section class="search-section">
-        <div class="container">
-            <h1 class="text-center mb-4">취업 정보를 찾아보세요</h1>
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <form class="search-form">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="기업명, 직무, 지역 등을 검색해보세요">
-                            <div class="input-group-append">
-                                <button class="btn btn-search" type="submit">
-                                    <i class="fas fa-search"></i> 검색
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 메인 컨텐츠 -->
+<nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
-        <!-- 통계 섹션 -->
-        <div class="stats row">
-            <div class="col-md-3 stat-item">
-                <div class="stat-number">1,234</div>
-                <div>등록된 기업</div>
-            </div>
-            <div class="col-md-3 stat-item">
-                <div class="stat-number">5,678</div>
-                <div>면접 후기</div>
-            </div>
-            <div class="col-md-3 stat-item">
-                <div class="stat-number">9,012</div>
-                <div>커뮤니티 글</div>
-            </div>
-            <div class="col-md-3 stat-item">
-                <div class="stat-number">3,456</div>
-                <div>가입 회원</div>
+        <a class="navbar-brand" href="/home">소곤소곤</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/company-info">기업 정보</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/interview">면접 후기</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/community">커뮤니티</a>
+                </li>
+                <li class="nav-item" th:if="${session.user == null}">
+                    <a class="nav-link" href="/login">로그인</a>
+                </li>
+                <li class="nav-item" th:if="${session.user != null}">
+                    <a class="nav-link" href="/logout">로그아웃</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="hero-title">개발자의 성장을 함께하는 커뮤니티</h1>
+                <p class="hero-subtitle">면접 후기부터 취업 상담까지, 개발자들의 이야기가 모이는 공간</p>
+                <a href="/signup" class="btn btn-outline-light btn-lg me-3">회원가입</a>
+                <a href="/interview" class="btn btn-light btn-lg">면접 후기 보기</a>
             </div>
         </div>
+    </div>
+</section>
 
-        <!-- 주요 기능 섹션 -->
-        <div class="row mt-5">
-            <div class="col-md-3">
-                <div class="card text-center p-4">
-                    <div class="card-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <h5 class="feature-title">기업 정보</h5>
-                    <p>채용 정보, 복지, 연봉 등<br>기업 정보를 확인하세요</p>
-                    <a href="/companies" class="btn btn-outline-primary">자세히 보기</a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center p-4">
-                    <div class="card-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h5 class="feature-title">면접 후기</h5>
-                    <p>실제 면접 경험과<br>합격 자소서를 공유해요</p>
-                    <a href="/interviews" class="btn btn-outline-primary">자세히 보기</a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center p-4">
-                    <div class="card-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <h5 class="feature-title">커뮤니티</h5>
-                    <p>취업 준비 경험을<br>함께 나눠보세요</p>
-                    <a href="/community" class="btn btn-outline-primary">자세히 보기</a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center p-4">
-                    <div class="card-icon">
-                        <i class="fas fa-bookmark"></i>
-                    </div>
-                    <h5 class="feature-title">스크랩</h5>
-                    <p>관심 있는 정보를<br>저장해두세요</p>
-                    <a href="/scraps" class="btn btn-outline-primary">자세히 보기</a>
-                </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="bi bi-people-fill feature-icon"></i>
+                <h3 class="feature-title">개발자 커뮤니티</h3>
+                <p class="feature-description">
+                    다양한 경험을 가진 개발자들과 소통하며
+                    함께 성장할 수 있는 공간입니다.
+                </p>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="bi bi-briefcase-fill feature-icon"></i>
+                <h3 class="feature-title">기업 정보</h3>
+                <p class="feature-description">
+                    IT 기업들의 상세 정보와 리뷰를 확인하고
+                    나에게 맞는 회사를 찾아보세요.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card">
+                <i class="bi bi-chat-dots-fill feature-icon"></i>
+                <h3 class="feature-title">면접 후기</h3>
+                <p class="feature-description">
+                    실제 면접 경험을 공유하고
+                    더 나은 준비를 할 수 있습니다.
+                </p>
+            </div>
+        </div>
+    </div>
 
-        <!-- 최근 게시물 섹션 -->
-        <div class="recent-posts">
-            <h3 class="mb-4">최근 올라온 정보</h3>
+    <div class="stats-section">
+        <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="post-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="company-logo mr-3">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-0">네이버 신입 개발자 채용</h5>
-                                <small class="text-muted">방금 전</small>
-                            </div>
-                        </div>
-                        <p>2025년 상반기 신입 개발자 공개채용 진행 중...</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="badge badge-primary">채용중</span>
-                            </div>
-                            <div>
-                                <i class="far fa-heart"></i> 123
-                                <i class="far fa-comment ml-2"></i> 45
-                            </div>
-                        </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-number">15,000+</div>
+                        <div class="stat-label">활성 회원</div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="post-card">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="company-logo mr-3">
-                                <i class="fas fa-user-tie"></i>
-                            </div>
-                            <div>
-                                <h5 class="mb-0">카카오 면접 후기</h5>
-                                <small class="text-muted">1시간 전</small>
-                            </div>
-                        </div>
-                        <p>2024년 하반기 신입 면접 후기입니다...</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="badge badge-success">합격</span>
-                            </div>
-                            <div>
-                                <i class="far fa-heart"></i> 89
-                                <i class="far fa-comment ml-2"></i> 23
-                            </div>
-                        </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-number">2,500+</div>
+                        <div class="stat-label">면접 후기</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">기업 정보</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div class="cta-section">
+        <h2 class="mb-4">지금 바로 시작하세요</h2>
+        <p class="mb-4">개발자들과 함께 성장하는 여정을 시작해보세요.</p>
+        <a href="/signup" class="btn btn-primary btn-lg">무료로 가입하기</a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

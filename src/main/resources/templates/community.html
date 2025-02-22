@@ -9,48 +9,214 @@
     <style>
         :root {
             --primary-color: #4a90e2;
+            --secondary-color: #f8f9fa;
+            --accent-color: #ff6b6b;
+            --text-color: #333;
+            --border-radius: 15px;
         }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            color: var(--text-color);
+            background-color: #f5f7fa;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: white !important;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.2rem;
+            border-radius: var(--border-radius);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--primary-color);
+            color: white !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
         .post-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
-            padding: 20px;
+            background: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 25px;
             margin-bottom: 20px;
-            transition: transform 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
+
         .post-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
         }
-        .category-badge {
-            background-color: #e9ecef;
-            padding: 5px 15px;
+
+        .tag {
+            background-color: var(--secondary-color);
+            padding: 6px 12px;
             border-radius: 20px;
             font-size: 0.9em;
-            margin-right: 10px;
+            margin-right: 8px;
+            color: var(--primary-color);
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 8px;
         }
+
         .search-bar {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 10px;
+            margin: 30px 0;
+            padding: 25px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
-        .comment-section {
-            background-color: #f8f9fa;
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 8px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74,144,226,0.3);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 6px 15px;
+            font-weight: 500;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .form-control {
+            border-radius: var(--border-radius);
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(74,144,226,0.2);
+            border-color: var(--primary-color);
+        }
+
+        .category-tabs {
+            background: white;
             padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+        }
+
+        .category-tabs .nav-link {
+            color: #666;
+            font-weight: 500;
+            padding: 8px 20px;
+            margin: 0 5px;
+            border-radius: 20px;
+        }
+
+        .category-tabs .nav-link.active {
+            background-color: var(--primary-color);
+            color: white !important;
+        }
+
+        .post-meta {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+
+        .post-content {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .post-stats i {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .search-bar .row > div {
+                margin-bottom: 10px;
+            }
+            
+            .container {
+                padding: 0 15px;
+            }
+            
+            .post-card {
+                padding: 20px;
+            }
+
+            .category-tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 10px;
+            }
+
+            .category-tabs .nav-link {
+                padding: 8px 15px;
+                margin: 0 3px;
+            }
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light">
     <div class="container">
         <a class="navbar-brand" href="/home">소곤소곤</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/company-info">기업 정보</a>
                 </li>
@@ -67,79 +233,82 @@
 
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>커뮤니티</h2>
+        <h2 style="font-weight: 700; color: var(--text-color);">커뮤니티</h2>
         <button class="btn btn-primary">
             <i class="bi bi-plus-lg"></i> 새 글 작성
         </button>
     </div>
 
+    <div class="category-tabs">
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="nav-link active" href="#">전체</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">취업고민</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">이직상담</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">스터디</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">자유게시판</a>
+            </li>
+        </ul>
+    </div>
+
     <div class="search-bar">
-        <div class="row">
-            <div class="col-md-4">
+        <div class="row g-3">
+            <div class="col-md-8">
                 <input type="text" class="form-control" placeholder="검색어를 입력하세요">
             </div>
-            <div class="col-md-3">
-                <select class="form-select">
-                    <option>전체 게시판</option>
-                    <option>취업 질문</option>
-                    <option>스터디 모집</option>
-                    <option>취업 고민</option>
-                    <option>자유게시판</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select">
-                    <option>최신순</option>
-                    <option>인기순</option>
-                    <option>댓글순</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-primary w-100">검색</button>
+            <div class="col-md-4">
+                <button class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> 검색
+                </button>
             </div>
         </div>
     </div>
 
     <div class="post-card">
-        <span class="category-badge">취업 질문</span>
-        <div class="d-flex justify-content-between align-items-start mt-2">
-            <div>
-                <h4>신입 개발자 포트폴리오는 어떻게 준비하나요?</h4>
-                <p class="text-muted">작성자: 취준생 | 작성일: 2024.02.22 | 조회수: 342</p>
-            </div>
-            <div>
-                <button class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-heart"></i> 추천 15
-                </button>
-            </div>
+        <span class="tag">취업고민</span>
+        <h3 class="post-title">신입 개발자 포트폴리오 어떻게 준비하시나요?</h3>
+        <div class="post-meta">
+            <i class="bi bi-person"></i> 취준생123 · 
+            <i class="bi bi-clock"></i> 2시간 전
         </div>
-        <p>안녕하세요, 곧 졸업을 앞둔 취준생입니다. 포트폴리오 준비할 때 어떤 프로젝트를 넣으면 좋을까요?</p>
-        <div class="comment-section">
-            <div class="d-flex justify-content-between">
-                <small>댓글 5개</small>
-                <button class="btn btn-link btn-sm">댓글 작성</button>
+        <div class="post-content">
+            안녕하세요! 현재 신입 개발자 취업 준비 중인데, 포트폴리오를 어떻게 준비하면 좋을지 고민이에요.
+            주로 어떤 프로젝트를 진행하셨는지, 깃허브는 어떻게 관리하시는지 궁금합니다...
+        </div>
+        <div class="post-footer">
+            <div class="post-stats">
+                <span><i class="bi bi-eye"></i> 조회 156</span>
+                <span><i class="bi bi-chat-dots"></i> 댓글 8</span>
+                <span><i class="bi bi-heart"></i> 추천 12</span>
             </div>
         </div>
     </div>
 
     <div class="post-card">
-        <span class="category-badge">스터디 모집</span>
-        <div class="d-flex justify-content-between align-items-start mt-2">
-            <div>
-                <h4>[모집중] 코딩테스트 스터디원 모집합니다</h4>
-                <p class="text-muted">작성자: 알고리즘마스터 | 작성일: 2024.02.21 | 조회수: 156</p>
-            </div>
-            <div>
-                <button class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-heart"></i> 추천 8
-                </button>
-            </div>
+        <span class="tag">이직상담</span>
+        <h3 class="post-title">3년차 백엔드 개발자 이직 고민</h3>
+        <div class="post-meta">
+            <i class="bi bi-person"></i> 개발자K · 
+            <i class="bi bi-clock"></i> 5시간 전
         </div>
-        <p>매주 토요일 오후 2시, 프로그래머스/백준 문제 풀이 스터디 하실 분 모집합니다.</p>
-        <div class="comment-section">
-            <div class="d-flex justify-content-between">
-                <small>댓글 3개</small>
-                <button class="btn btn-link btn-sm">댓글 작성</button>
+        <div class="post-content">
+            현재 중소기업에서 3년째 백엔드 개발자로 일하고 있습니다.
+            최근 이직을 고민하고 있는데, 대기업/스타트업 중 어느 쪽으로 가는 게 좋을까요?
+            각각의 장단점에 대해 조언 부탁드립니다...
+        </div>
+        <div class="post-footer">
+            <div class="post-stats">
+                <span><i class="bi bi-eye"></i> 조회 234</span>
+                <span><i class="bi bi-chat-dots"></i> 댓글 15</span>
+                <span><i class="bi bi-heart"></i> 추천 28</span>
             </div>
         </div>
     </div>

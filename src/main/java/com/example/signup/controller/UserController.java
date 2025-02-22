@@ -98,17 +98,12 @@ public class UserController {
     }
 
     @GetMapping("/login/naver")
-    public String loginWithNaver(HttpServletResponse response) {
+    public String loginWithNaver() {
         logger.info("===== Starting Naver Login Process =====");
         String authorizationUrl = naverApiService.generateAuthorizationUrl();
         logger.info("Redirecting to Naver authorization URL: {}", authorizationUrl);
-        logger.debug("Naver authorization URL: {}", authorizationUrl);
         
-        // 직접 리다이렉션
-        response.setHeader("Location", authorizationUrl);
-        response.setStatus(HttpServletResponse.SC_FOUND);
-        
-        return null;
+        return "redirect:" + authorizationUrl;
     }
 
     @GetMapping("/naver/callback")
