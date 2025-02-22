@@ -7,20 +7,30 @@ import com.example.signup.exception.UserAlreadyExistsException;
 import com.example.signup.service.NaverApiService;
 import com.example.signup.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -45,7 +55,7 @@ public class UserController {
     public String loginUser(
         @RequestParam String userId, 
         @RequestParam String password, 
-        HttpSession session, 
+        HttpSession session,
         Model model,
         RedirectAttributes redirectAttributes
     ) {
@@ -88,32 +98,100 @@ public class UserController {
     }
 
     @GetMapping("/login/naver")
-    public String loginWithNaver() {
+    public String loginWithNaver(HttpServletResponse response) {
+        logger.info("===== Starting Naver Login Process =====");
         String authorizationUrl = naverApiService.generateAuthorizationUrl();
-        return "redirect:" + authorizationUrl;
+        logger.info("Redirecting to Naver authorization URL: {}", authorizationUrl);
+        logger.debug("Naver authorization URL: {}", authorizationUrl);
+        
+        // 직접 리다이렉션
+        response.setHeader("Location", authorizationUrl);
+        response.setStatus(HttpServletResponse.SC_FOUND);
+        
+        return null;
     }
 
     @GetMapping("/naver/callback")
     public String naverCallback(
         @RequestParam String code, 
         @RequestParam String state, 
-        Model model
+        Model model,
+        HttpSession session
     ) {
+        logger.info("===== Naver Login Callback =====");
+        logger.info("Code: {}", code);
+        logger.info("State: {}", state);
+        
         try {
             UserEntity naverUser = naverApiService.getUserInfo(code, state);
+            logger.info("Retrieved user info - ID: {}, Name: {}", naverUser.getUserId(), naverUser.getUserName());
             
+            // 이미 가입된 사용자라면 바로 로그인 처리
             if (userService.existsByUserId(naverUser.getUserId())) {
-                model.addAttribute("error", "이미 존재하는 아이디입니다. 다른 아이디로 가입해주세요.");
-                return "signup_form";
+                logger.info("Existing user found. Logging in...");
+                UserEntity existingUser = userService.getUserByUserId(naverUser.getUserId());
+                
+                // Spring Security 인증 처리
+                List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                UsernamePasswordAuthenticationToken authentication = 
+                    new UsernamePasswordAuthenticationToken(existingUser.getUserId(), null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, 
+                                  SecurityContextHolder.getContext());
+                
+                session.setAttribute("user", existingUser);
+                return "redirect:/home";
             }
             
-            userService.saveNaverUser(naverUser);
-            
-            return "redirect:/home";
+            // 새로운 사용자라면 추가 정보 입력 페이지로 이동
+            logger.info("New user. Redirecting to signup form...");
+            session.setAttribute("tempNaverUser", naverUser);
+            return "redirect:/social/signup";
         } catch (Exception e) {
             logger.error("Naver login error", e);
             model.addAttribute("error", "네이버 로그인 중 오류가 발생했습니다: " + e.getMessage());
             return "login_form";
+        }
+    }
+
+    @GetMapping("/social/signup")
+    public String showSocialSignupForm(Model model, HttpSession session) {
+        UserEntity tempUser = (UserEntity) session.getAttribute("tempNaverUser");
+        if (tempUser == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("userForm", tempUser);
+        return "social_signup";
+    }
+
+    @PostMapping("/social/signup/complete")
+    public String completeSocialSignup(
+        @ModelAttribute("userForm") UserEntity userForm,
+        HttpSession session
+    ) {
+        try {
+            // 임시 저장된 네이버 사용자 정보 가져오기
+            UserEntity tempUser = (UserEntity) session.getAttribute("tempNaverUser");
+            if (tempUser == null) {
+                return "redirect:/login";
+            }
+
+            // 기존 정보 유지하면서 새로 입력받은 정보 업데이트
+            tempUser.setOccupation(userForm.getOccupation());
+            tempUser.setInterest(userForm.getInterest());
+            tempUser.setAddr(userForm.getAddr());
+            tempUser.setGender(userForm.getGender());
+
+            // 사용자 저장
+            UserEntity savedUser = userService.saveNaverUser(tempUser);
+            
+            // 세션 업데이트
+            session.removeAttribute("tempNaverUser");
+            session.setAttribute("user", savedUser);
+            
+            return "redirect:/home";
+        } catch (Exception e) {
+            return "redirect:/social/signup?error";
         }
     }
 

@@ -61,13 +61,18 @@ public class UserService implements UserDetailsService {
 
     // 새로 추가된 메서드들
     public boolean existsByUserId(String userId) {
-        return userRepository.existsByUserId(userId);
+        return userRepository.findByUserId(userId).isPresent();
     }
 
-    public void saveNaverUser(UserEntity naverUser) {
+    public UserEntity getUserByUserId(String userId) {
+        return userRepository.findByUserId(userId)
+            .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + userId));
+    }
+
+    public UserEntity saveNaverUser(UserEntity naverUser) {
         // 필요한 경우 추가 처리 (예: 비밀번호 암호화)
         naverUser.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
-        userRepository.save(naverUser);
+        return userRepository.save(naverUser);
     }
 
     // 기존 모든 사용자 조회 메서드

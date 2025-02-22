@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>추가 정보 입력</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container { margin-top: 50px; }
+        .form-group { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">추가 정보 입력</h3>
+                        <p class="text-center mb-4">소곤소곤 서비스 이용을 위해 추가 정보를 입력해주세요.</p>
+                        
+                        <form th:action="@{/social/signup/complete}" method="post" th:object="${userForm}">
+                            <input type="hidden" th:field="*{userId}" />
+                            <input type="hidden" th:field="*{email}" />
+                            <input type="hidden" th:field="*{userName}" />
+                            
+                            <div class="form-group">
+                                <label for="occupation">직업</label>
+                                <input type="text" class="form-control" id="occupation" th:field="*{occupation}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="interest">관심사</label>
+                                <input type="text" class="form-control" id="interest" th:field="*{interest}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="addr">주소</label>
+                                <input type="text" class="form-control" id="addr" th:field="*{addr}" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>성별</label>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="male" name="gender" value="MALE" class="custom-control-input" th:field="*{gender}" required>
+                                    <label class="custom-control-label" for="male">남성</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="female" name="gender" value="FEMALE" class="custom-control-input" th:field="*{gender}">
+                                    <label class="custom-control-label" for="female">여성</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group text-center">
+                                <button type="submit" class="btn btn-primary btn-block">가입 완료</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
