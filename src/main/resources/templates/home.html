@@ -3,55 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>홈</title>
+    <title>소곤소곤 - 취업 정보 공유 플랫폼</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #03C75A;
+            --secondary-color: #0056b3;
+        }
+        
         body {
-            margin: 0;
-            padding: 0;
+            background-color: #f8f9fa;
+            font-family: 'Noto Sans KR', sans-serif;
         }
-        .container {
-            margin-top: 50px;
+        
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
         }
-        .navbar .dropdown-menu {
-            right: 0;
-            left: auto;
+        
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        
+        .search-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 60px 0;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .search-form input {
+            border-radius: 25px;
+            padding: 25px 20px;
+            border: none;
+        }
+        
+        .btn-search {
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 25px;
+            padding: 15px 30px;
+            border: none;
+        }
+        
+        .btn-search:hover {
+            background-color: #004494;
+            color: white;
+        }
+        
+        .stats {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .recent-posts {
+            margin-top: 40px;
+        }
+        
+        .post-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">소곤소곤</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img src="https://via.placeholder.com/30" class="rounded-circle" alt="user icon">
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/userProfile">회원정보</a>
-                    <a class="dropdown-item" href="/logout">로그아웃</a>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="/home">
+                <i class="fas fa-comments"></i> 소곤소곤
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/companies">기업 정보</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/interviews">면접 후기</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/community">커뮤니티</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/mypage">마이페이지</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">로그아웃</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 검색 섹션 -->
+    <section class="search-section">
+        <div class="container">
+            <h1 class="text-center mb-4">취업 정보를 찾아보세요</h1>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <form class="search-form">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="기업명, 직무, 지역 등을 검색해보세요">
+                            <div class="input-group-append">
+                                <button class="btn btn-search" type="submit">
+                                    <i class="fas fa-search"></i> 검색
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </li>
-        </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- 메인 컨텐츠 -->
+    <div class="container">
+        <!-- 통계 섹션 -->
+        <div class="stats row">
+            <div class="col-md-3 stat-item">
+                <div class="stat-number">1,234</div>
+                <div>등록된 기업</div>
+            </div>
+            <div class="col-md-3 stat-item">
+                <div class="stat-number">5,678</div>
+                <div>면접 후기</div>
+            </div>
+            <div class="col-md-3 stat-item">
+                <div class="stat-number">9,012</div>
+                <div>커뮤니티 글</div>
+            </div>
+            <div class="col-md-3 stat-item">
+                <div class="stat-number">3,456</div>
+                <div>가입 회원</div>
+            </div>
+        </div>
+
+        <!-- 주요 기능 섹션 -->
+        <div class="row mt-5">
+            <div class="col-md-3">
+                <div class="card text-center p-4">
+                    <div class="card-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h5 class="feature-title">기업 정보</h5>
+                    <p>채용 정보, 복지, 연봉 등<br>기업 정보를 확인하세요</p>
+                    <a href="/companies" class="btn btn-outline-primary">자세히 보기</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-4">
+                    <div class="card-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h5 class="feature-title">면접 후기</h5>
+                    <p>실제 면접 경험과<br>합격 자소서를 공유해요</p>
+                    <a href="/interviews" class="btn btn-outline-primary">자세히 보기</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-4">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h5 class="feature-title">커뮤니티</h5>
+                    <p>취업 준비 경험을<br>함께 나눠보세요</p>
+                    <a href="/community" class="btn btn-outline-primary">자세히 보기</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-4">
+                    <div class="card-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <h5 class="feature-title">스크랩</h5>
+                    <p>관심 있는 정보를<br>저장해두세요</p>
+                    <a href="/scraps" class="btn btn-outline-primary">자세히 보기</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 최근 게시물 섹션 -->
+        <div class="recent-posts">
+            <h3 class="mb-4">최근 올라온 정보</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="post-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="company-logo mr-3">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">네이버 신입 개발자 채용</h5>
+                                <small class="text-muted">방금 전</small>
+                            </div>
+                        </div>
+                        <p>2025년 상반기 신입 개발자 공개채용 진행 중...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge badge-primary">채용중</span>
+                            </div>
+                            <div>
+                                <i class="far fa-heart"></i> 123
+                                <i class="far fa-comment ml-2"></i> 45
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="post-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="company-logo mr-3">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-0">카카오 면접 후기</h5>
+                                <small class="text-muted">1시간 전</small>
+                            </div>
+                        </div>
+                        <p>2024년 하반기 신입 면접 후기입니다...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="badge badge-success">합격</span>
+                            </div>
+                            <div>
+                                <i class="far fa-heart"></i> 89
+                                <i class="far fa-comment ml-2"></i> 23
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</nav>
 
-<div class="container">
-    <h1>홈</h1>
-    <p th:if="${user != null}">
-        안녕하세요, <span th:text="${user.userName}"></span>님!
-    </p>
-    <p th:if="${user == null}">
-        안녕하세요, 방문자님!
-    </p>
-</div>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
