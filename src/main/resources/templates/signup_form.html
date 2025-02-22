@@ -242,10 +242,14 @@
             <div class="mb-3">
                 <label for="userId" class="form-label">아이디</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="userId" th:field="*{userId}" required>
+                    <input type="text" class="form-control" id="userId" th:field="*{userId}" 
+                           required pattern="^[a-zA-Z0-9가-힣]+$" 
+                           title="한글, 영문, 숫자만 사용할 수 있습니다"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9가-힣]/g, '')">
                     <button type="button" class="btn btn-outline-primary" onclick="checkUserId()">중복확인</button>
                 </div>
-                <div class="form-text" id="userIdStatus"></div>
+                <div class="invalid-feedback" id="userIdError"></div>
+                <small class="form-text text-muted">한글, 영문, 숫자만 사용할 수 있습니다.</small>
             </div>
 
             <div class="mb-3">
@@ -257,10 +261,14 @@
             <div class="mb-3">
                 <label for="nickname" class="form-label">닉네임</label>
                 <div class="input-group">
-                    <input type="text" class="form-control" id="nickname" th:field="*{nickname}" required>
+                    <input type="text" class="form-control" id="nickname" th:field="*{nickname}" 
+                           required pattern="^[a-zA-Z0-9가-힣]+$" 
+                           title="한글, 영문, 숫자만 사용할 수 있습니다"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9가-힣]/g, '')">
                     <button type="button" class="btn btn-outline-primary" onclick="checkNickname()">중복확인</button>
                 </div>
-                <div class="form-text" id="nicknameStatus">다른 사용자에게 보여질 닉네임입니다.</div>
+                <div class="invalid-feedback" id="nicknameError"></div>
+                <small class="form-text text-muted">한글, 영문, 숫자만 사용할 수 있습니다.</small>
             </div>
 
             <div class="mb-3">
@@ -277,19 +285,14 @@
             <div class="mb-3">
                 <label for="password" class="form-label">비밀번호</label>
                 <input type="password" class="form-control" id="password" th:field="*{password}" required>
-                <div class="password-requirements">
-                    <h6>비밀번호 요구사항</h6>
-                    <ul>
-                        <li>최소 8자 이상</li>
-                        <li>영문 대/소문자, 숫자, 특수문자 중 3가지 이상 조합</li>
-                        <li>연속된 숫자나 문자 사용 제한</li>
-                    </ul>
-                </div>
             </div>
 
             <div class="mb-3">
                 <label for="confirmPassword" class="form-label">비밀번호 확인</label>
-                <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" required>
+                <input type="password" class="form-control" id="confirmPassword" th:field="*{confirmPassword}" 
+                       required oninput="checkPasswordMatch()">
+                <div class="invalid-feedback" id="confirmPasswordError"></div>
+                <div class="valid-feedback" id="confirmPasswordSuccess"></div>
             </div>
 
             <div class="mb-3">
@@ -359,54 +362,124 @@ let isUserIdChecked = false;
 let isNicknameChecked = false;
 
 function checkUserId() {
-    const userId = $('#userId').val();
+    const userId = document.getElementById('userId').value;
     if (!userId) {
-        alert('아이디를 입력해주세요.');
+        showUserIdError('아이디를 입력해주세요.');
         return;
     }
-    
-    $.get('/api/check-userid?userId=' + encodeURIComponent(userId))
-        .done(function(response) {
-            if (!response.exists) {
-                $('#userIdStatus').text('사용 가능한 아이디입니다.').css('color', 'green');
-                isUserIdChecked = true;
-            } else {
-                $('#userIdStatus').text('이미 사용 중인 아이디입니다.').css('color', 'red');
+
+    if (!/^[a-zA-Z0-9가-힣]+$/.test(userId)) {
+        showUserIdError('아이디는 한글, 영문, 숫자만 사용할 수 있습니다.');
+        return;
+    }
+
+    fetch('/api/check-userid?userId=' + encodeURIComponent(userId))
+        .then(response => response.json())
+        .then(data => {
+            if (data.exists) {
+                showUserIdError('이미 사용 중인 아이디입니다.');
                 isUserIdChecked = false;
+            } else {
+                showUserIdSuccess('사용 가능한 아이디입니다.');
+                isUserIdChecked = true;
             }
             updateSubmitButton();
         })
-        .fail(function() {
-            alert('서버 오류가 발생했습니다.');
+        .catch(error => {
+            showUserIdError('중복 확인 중 오류가 발생했습니다.');
+            isUserIdChecked = false;
         });
+}
+
+function showUserIdError(message) {
+    const userIdInput = document.getElementById('userId');
+    const errorDiv = document.getElementById('userIdError');
+    userIdInput.classList.add('is-invalid');
+    userIdInput.classList.remove('is-valid');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    errorDiv.style.color = '#dc3545';
+}
+
+function showUserIdSuccess(message) {
+    const userIdInput = document.getElementById('userId');
+    const errorDiv = document.getElementById('userIdError');
+    userIdInput.classList.remove('is-invalid');
+    userIdInput.classList.add('is-valid');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    errorDiv.style.color = '#28a745';
 }
 
 function checkNickname() {
-    const nickname = $('#nickname').val();
+    const nickname = document.getElementById('nickname').value;
     if (!nickname) {
-        alert('닉네임을 입력해주세요.');
+        showNicknameError('닉네임을 입력해주세요.');
         return;
     }
-    
-    $.get('/api/check-nickname?nickname=' + encodeURIComponent(nickname))
-        .done(function(response) {
-            if (!response.exists) {
-                $('#nicknameStatus').text('사용 가능한 닉네임입니다.').css('color', 'green');
-                isNicknameChecked = true;
-            } else {
-                $('#nicknameStatus').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+
+    if (!/^[a-zA-Z0-9가-힣]+$/.test(nickname)) {
+        showNicknameError('닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.');
+        return;
+    }
+
+    fetch('/api/check-nickname?nickname=' + encodeURIComponent(nickname))
+        .then(response => response.json())
+        .then(data => {
+            if (data.exists) {
+                showNicknameError('이미 사용 중인 닉네임입니다.');
                 isNicknameChecked = false;
+            } else {
+                showNicknameSuccess('사용 가능한 닉네임입니다.');
+                isNicknameChecked = true;
             }
             updateSubmitButton();
         })
-        .fail(function() {
-            alert('서버 오류가 발생했습니다.');
+        .catch(error => {
+            showNicknameError('중복 확인 중 오류가 발생했습니다.');
+            isNicknameChecked = false;
         });
 }
 
-function updateSubmitButton() {
-    $('#submitBtn').prop('disabled', !(isUserIdChecked && isNicknameChecked));
+function showNicknameError(message) {
+    const nicknameInput = document.getElementById('nickname');
+    const errorDiv = document.getElementById('nicknameError');
+    nicknameInput.classList.add('is-invalid');
+    nicknameInput.classList.remove('is-valid');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    errorDiv.style.color = '#dc3545';
 }
+
+function showNicknameSuccess(message) {
+    const nicknameInput = document.getElementById('nickname');
+    const errorDiv = document.getElementById('nicknameError');
+    nicknameInput.classList.remove('is-invalid');
+    nicknameInput.classList.add('is-valid');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    errorDiv.style.color = '#28a745';
+}
+
+function updateSubmitButton() {
+    const submitButton = document.querySelector('button[type="submit"]');
+    submitButton.disabled = !(isUserIdChecked && isNicknameChecked);
+}
+
+// 입력 필드 값이 변경될 때마다 중복 확인 상태 초기화
+document.getElementById('userId').addEventListener('input', function() {
+    isUserIdChecked = false;
+    updateSubmitButton();
+    this.classList.remove('is-invalid', 'is-valid');
+    document.getElementById('userIdError').style.display = 'none';
+});
+
+document.getElementById('nickname').addEventListener('input', function() {
+    isNicknameChecked = false;
+    updateSubmitButton();
+    this.classList.remove('is-invalid', 'is-valid');
+    document.getElementById('nicknameError').style.display = 'none';
+});
 
 const cityData = {
     '서울특별시': ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구', '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구'],
@@ -426,6 +499,37 @@ function updateCities() {
         });
     }
 }
+
+function checkPasswordMatch() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const errorDiv = document.getElementById('confirmPasswordError');
+    const successDiv = document.getElementById('confirmPasswordSuccess');
+
+    if (confirmPassword.length > 0) {
+        if (password === confirmPassword) {
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+            errorDiv.style.display = 'none';
+            successDiv.textContent = '비밀번호가 일치합니다!';
+            successDiv.style.display = 'block';
+        } else {
+            confirmPasswordInput.classList.remove('is-valid');
+            confirmPasswordInput.classList.add('is-invalid');
+            successDiv.style.display = 'none';
+            errorDiv.textContent = '비밀번호가 일치하지 않습니다!';
+            errorDiv.style.display = 'block';
+        }
+    } else {
+        confirmPasswordInput.classList.remove('is-valid', 'is-invalid');
+        errorDiv.style.display = 'none';
+        successDiv.style.display = 'none';
+    }
+}
+
+// 비밀번호 입력 필드가 변경될 때도 확인
+document.getElementById('password').addEventListener('input', checkPasswordMatch);
 
 // 폼 유효성 검사
 $(document).ready(function() {

@@ -2,6 +2,7 @@ package com.example.signup.Form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class UserCreateForm {
 
     @NotEmpty(message = "아이디는 필수입니다.")
     @Size(min = 3, max = 20, message = "아이디는 3-20자 사이여야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "아이디는 한글, 영문, 숫자만 사용할 수 있습니다.")
     private String userId;
 
     @NotEmpty(message = "이름은 필수 항목입니다.")
@@ -17,6 +19,7 @@ public class UserCreateForm {
 
     @NotEmpty(message = "닉네임은 필수 항목입니다.")
     @Size(min = 2, max = 20, message = "닉네임은 2-20자 사이여야 합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "닉네임은 한글, 영문, 숫자만 사용할 수 있습니다.")
     private String nickname;
 
     @NotEmpty(message = "비밀번호는 필수 항목입니다.")
