@@ -71,11 +71,11 @@ public class UserController {
 
     @PostMapping("/login")
     public String loginUser(
-        @RequestParam String userId, 
-        @RequestParam String password, 
-        HttpSession session,
-        Model model,
-        RedirectAttributes redirectAttributes
+            @RequestParam String userId,
+            @RequestParam String password,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes
     ) {
         try {
             UserEntity user = userService.authenticate(userId, password);
@@ -127,30 +127,30 @@ public class UserController {
     public String naverCallback(@RequestParam String code, @RequestParam String state, Model model, HttpSession session) {
         try {
             logger.info("Naver callback received - code: {}, state: {}", code, state);
-            
+
             UserEntity naverUser = naverApiService.getUserInfo(code, state);
-            logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}", 
-                naverUser.getUserId(), naverUser.getUserName(), naverUser.getEmail());
-            
+            logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}",
+                    naverUser.getUserId(), naverUser.getUserName(), naverUser.getEmail());
+
             // 데이터베이스에서 사용자 조회
             boolean userExists = userService.existsByUserId(naverUser.getUserId());
             logger.info("User exists in database: {}", userExists);
-            
+
             if (!userExists) {
                 // 새로운 사용자인 경우 회원가입 페이지로 이동
                 session.setAttribute("tempNaverUser", naverUser);
                 return "naver_signup_form";
             }
-            
+
             // 기존 사용자인 경우 로그인 처리
             logger.info("Existing user found. Processing login...");
             UserEntity existingUser = userService.getUserByUserId(naverUser.getUserId());
-            
+
             // 세션에 사용자 정보 저장
             existingUser.setPassword(null); // 보안을 위해 비밀번호 제거
             session.setAttribute("user", existingUser);
             model.addAttribute("user", existingUser);  // Model에도 user 객체 추가
-            
+
             // Spring Security Context 설정
             var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             var authentication = new UsernamePasswordAuthenticationToken(existingUser, null, authorities);
@@ -158,9 +158,9 @@ public class UserController {
             securityContext.setAuthentication(authentication);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
             SecurityContextHolder.setContext(securityContext);
-            
+
             return "naver_login_success";
-            
+
         } catch (Exception e) {
             logger.error("Error during Naver callback processing", e);
             model.addAttribute("error", "네이버 로그인 처리 중 오류가 발생했습니다: " + e.getMessage());
@@ -173,22 +173,22 @@ public class UserController {
         logger.info("===== Naver Login Success =====");
         UserEntity user = (UserEntity) session.getAttribute("user");
         logger.info("User in session: {}", user != null ? user.getUserId() : "null");
-        
+
         if (user == null) {
             logger.info("No user in session, redirecting to login");
             return "redirect:/login";
         }
-        
+
         // 실제로 DB에 사용자가 있는지 한 번 더 확인
         boolean userExists = userService.existsByUserId(user.getUserId());
         logger.info("User exists in database: {}", userExists);
-        
+
         if (!userExists) {
             logger.info("User not found in database, redirecting to signup");
             session.invalidate();
             return "redirect:/login";
         }
-        
+
         model.addAttribute("user", user);
         return "naver_login_success";
     }
@@ -205,8 +205,8 @@ public class UserController {
 
     @PostMapping("/social/signup/complete")
     public String completeSocialSignup(
-        @ModelAttribute("userForm") UserEntity userForm,
-        HttpSession session
+            @ModelAttribute("userForm") UserEntity userForm,
+            HttpSession session
     ) {
         logger.info("===== Complete Social Signup =====");
         try {
@@ -216,31 +216,31 @@ public class UserController {
                 logger.error("No temporary user found in session");
                 return "redirect:/login";
             }
-            
+
             logger.info("Temp user found - ID: {}, Name: {}", tempUser.getUserId(), tempUser.getUserName());
-            
+
             // 기존 정보 유지하면서 새로 입력받은 정보 업데이트
             tempUser.setNickname(userForm.getNickname());
             tempUser.setProvince(userForm.getProvince());
             tempUser.setCity(userForm.getCity());
             tempUser.setGender(userForm.getGender());
-            
+
             // 사용자 저장
             UserEntity savedUser = userService.saveNaverUser(tempUser);
             logger.info("User saved successfully - ID: {}, Nickname: {}", savedUser.getUserId(), savedUser.getNickname());
-            
+
             // 세션 업데이트
             session.removeAttribute("tempNaverUser");
             session.setAttribute("user", savedUser);
-            
+
             // Spring Security 인증 처리
             List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-            UsernamePasswordAuthenticationToken authentication = 
-                new UsernamePasswordAuthenticationToken(savedUser.getUserId(), null, authorities);
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(savedUser.getUserId(), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, 
-                              SecurityContextHolder.getContext());
-            
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    SecurityContextHolder.getContext());
+
             return "redirect:/home";
         } catch (Exception e) {
             logger.error("Error during social signup completion", e);
@@ -331,25 +331,33 @@ public class UserController {
 
     @PostMapping("/edit-profile")
     @ResponseBody
-    public ResponseEntity<?> editProfile(@ModelAttribute UserEntity updatedUser, HttpSession session) {
+    public ResponseEntity<?> editProfile(@RequestBody Map<String, String> updates, HttpSession session) {
         try {
             UserEntity currentUser = (UserEntity) session.getAttribute("user");
             if (currentUser == null) {
-                return ResponseEntity.status(401).body("User not logged in");
+                return ResponseEntity.status(401).body("로그인이 필요합니다.");
             }
 
-            // 현재 사용자의 ID를 설정
-            updatedUser.setUser_idx(currentUser.getUser_idx());
-            updatedUser.setUserId(currentUser.getUserId());
-            
-            // 비밀번호는 현재 사용자의 것을 유지
-            updatedUser.setPassword(currentUser.getPassword());
-            
-            // 프로필 이미지는 현재 설정된 것을 유지
-            updatedUser.setProfileImage(currentUser.getProfileImage());
+            // 닉네임 유효성 검사
+            String nickname = updates.get("nickname");
+            if (nickname == null || !nickname.matches("[가-힣a-zA-Z0-9]+")) {
+                return ResponseEntity.badRequest().body("닉네임은 한글, 영문, 숫자만 입력 가능합니다.");
+            }
+
+            // 지역 유효성 검사
+            String province = updates.get("province");
+            String city = updates.get("city");
+            if (province == null || province.isEmpty() || city == null || city.isEmpty()) {
+                return ResponseEntity.badRequest().body("지역을 선택해주세요.");
+            }
+
+            // 현재 사용자의 정보를 업데이트
+            currentUser.setNickname(nickname);
+            currentUser.setProvince(province);
+            currentUser.setCity(city);
             
             // 사용자 정보 업데이트
-            UserEntity savedUser = userService.updateUser(updatedUser);
+            UserEntity savedUser = userService.updateUser(currentUser);
             
             // 세션 업데이트
             savedUser.setPassword(null); // 보안을 위해 비밀번호 제거
@@ -358,7 +366,7 @@ public class UserController {
             return ResponseEntity.ok().build();
             
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Failed to update profile: " + e.getMessage());
+            return ResponseEntity.status(500).body("프로필 수정에 실패했습니다: " + e.getMessage());
         }
     }
 
@@ -368,7 +376,18 @@ public class UserController {
         try {
             UserEntity user = (UserEntity) session.getAttribute("user");
             if (user == null) {
-                return ResponseEntity.status(401).body("User not logged in");
+                return ResponseEntity.status(401).body("로그인이 필요합니다.");
+            }
+
+            // 파일 유효성 검사
+            if (file.isEmpty()) {
+                return ResponseEntity.badRequest().body("파일을 선택해주세요.");
+            }
+
+            // 이미지 파일 검증
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest().body("이미지 파일만 업로드 가능합니다.");
             }
 
             // 파일 저장 경로 설정
@@ -385,6 +404,16 @@ public class UserController {
             // 파일 저장
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+            // 기존 프로필 이미지 삭제
+            if (user.getProfileImage() != null) {
+                try {
+                    Path oldFilePath = Paths.get("." + user.getProfileImage());
+                    Files.deleteIfExists(oldFilePath);
+                } catch (Exception e) {
+                    // 기존 파일 삭제 실패는 무시
+                }
+            }
+
             // 사용자 프로필 이미지 경로 업데이트
             user.setProfileImage("/uploads/profile-images/" + fileName);
             userService.updateUser(user);
@@ -394,7 +423,7 @@ public class UserController {
             ));
 
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Failed to upload image: " + e.getMessage());
+            return ResponseEntity.status(500).body("이미지 업로드에 실패했습니다: " + e.getMessage());
         }
     }
 

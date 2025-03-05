@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원정보 수정 - 소곤소곤</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -62,32 +61,55 @@
             color: var(--primary-color) !important;
         }
 
+        .nav-link.active {
+            color: var(--primary-color) !important;
+            font-weight: 700;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
         .profile-container {
-            background: white;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #fff;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 2rem;
-            margin-top: 2rem;
-            max-width: 800px;
         }
 
         .profile-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            gap: 2rem;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #eee;
         }
 
+        .profile-info {
+            flex-grow: 1;
+        }
+
         .profile-image-container {
-            width: 150px;
-            height: 150px;
             position: relative;
-            margin-right: 2rem;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             overflow: hidden;
-            background-color: #f8f9fa;
-            box-shadow: var(--box-shadow);
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
         }
 
         .profile-image {
@@ -96,263 +118,420 @@
             object-fit: cover;
         }
 
-        .profile-image-container i.bi-person {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 80px;
+        .default-profile-icon {
+            font-size: 60px;
             color: #adb5bd;
         }
 
-        .profile-image-upload {
+        .camera-icon-overlay {
             position: absolute;
             bottom: 0;
+            left: 0;
             right: 0;
-            width: 40px;
-            height: 40px;
-            background: var(--primary-color);
-            border-radius: 50%;
+            height: 35px;
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             cursor: pointer;
-            transition: all 0.3s ease;
             color: white;
+        }
+
+        .camera-icon-overlay i {
             font-size: 18px;
         }
 
-        .profile-image-upload:hover {
-            background: #357abd;
+        .profile-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 0.5rem;
         }
 
-        .profile-image-upload input {
-            display: none;
+        .profile-email {
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-section {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            text-align: left;
         }
 
         .form-group {
             margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group .row {
+            margin-bottom: 1rem;
         }
 
         .form-label {
             font-weight: 500;
             color: #666;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
         }
 
-        .form-control {
-            border-radius: 10px;
-            border: 1px solid #ddd;
-            padding: 0.75rem;
-            transition: all 0.3s ease;
+        .form-value {
+            color: var(--text-color);
+            font-weight: 500;
         }
 
-        .form-control:focus {
+        .form-control:read-only {
+            background-color: var(--secondary-color);
+            cursor: not-allowed;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-control, .form-select {
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+
+        .form-control:focus, .form-select:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
         }
 
+        .nav-container {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            margin-left: 2rem;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            margin-left: auto;
+            display: flex;
+            gap: 1rem;
+        }
+
         .btn-save {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 25px;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
             font-weight: 500;
-            transition: all 0.3s ease;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            min-width: 120px;
         }
 
         .btn-save:hover {
             background-color: #357abd;
-            color: white;
-        }
-
-        .btn-cancel {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 25px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            margin-right: 1rem;
-        }
-
-        .btn-cancel:hover {
-            background-color: #5a6268;
-            color: white;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 2rem;
+            border-color: #357abd;
         }
     </style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
-        <div class="container">
+        <div class="nav-container">
             <a class="navbar-brand" href="/home">소곤소곤</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/home">홈</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/company-info">기업정보</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/interview">면접후기</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/community">커뮤니티</a>
-                    </li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item" th:if="${session.user != null}">
-                        <a class="nav-link active" href="/profile">
-                            <i class="bi bi-person-circle"></i>
-                            <span th:text="${session.user.nickname}">회원정보</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" th:if="${session.user != null}">
-                        <a class="nav-link" href="/logout">로그아웃</a>
-                    </li>
-                    <li class="nav-item" th:if="${session.user == null}">
-                        <a class="nav-link" href="/login">로그인</a>
-                    </li>
-                </ul>
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a class="nav-link" href="/home">홈</a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" href="/company-info">기업정보</a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" href="/interview">면접후기</a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" href="/community">커뮤니티</a>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="nav-item">
+                    <a class="nav-link" href="/profile">회원정보</a>
+                </div>
+                <div class="nav-item">
+                    <a class="nav-link" href="/logout">로그아웃</a>
+                </div>
             </div>
         </div>
     </nav>
 
     <div class="container">
         <div class="profile-container">
-            <form th:action="@{/edit-profile}" method="post" id="editProfileForm">
-                <div class="profile-header">
-                    <div class="profile-image-container">
-                        <img th:if="${user.profileImage != null}" th:src="${user.profileImage}" alt="프로필 이미지" class="profile-image">
-                        <i th:if="${user.profileImage == null}" class="bi bi-person"></i>
-                        <label class="profile-image-upload" for="profileImageInput">
-                            <i class="bi bi-camera"></i>
-                            <input type="file" id="profileImageInput" accept="image/*" onchange="uploadProfileImage(this)">
-                        </label>
-                    </div>
-                    <h2>회원정보 수정</h2>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">아이디</label>
-                    <input type="text" class="form-control" th:value="${user.userId}" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">닉네임</label>
-                    <input type="text" class="form-control" name="nickname" th:value="${user.nickname}" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">이메일</label>
-                    <input type="email" class="form-control" th:value="${user.email}" readonly>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">성별</label>
-                    <select class="form-control" name="gender">
-                        <option value="MALE" th:selected="${user.gender == T(com.example.signup.entity.enum_.Gender).MALE}">남성</option>
-                        <option value="FEMALE" th:selected="${user.gender == T(com.example.signup.entity.enum_.Gender).FEMALE}">여성</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">지역</label>
-                    <div class="row">
-                        <div class="col">
-                            <input type="text" class="form-control" name="province" th:value="${user.province}" placeholder="도/시">
-                        </div>
-                        <div class="col">
-                            <input type="text" class="form-control" name="city" th:value="${user.city}" placeholder="시/군/구">
-                        </div>
+            <div class="profile-header">
+                <div class="profile-image-container">
+                    <img th:if="${user.profileImage != null}" th:src="${user.profileImage}" alt="프로필 이미지" class="profile-image">
+                    <i th:unless="${user.profileImage != null}" class="fas fa-user default-profile-icon"></i>
+                    <div class="camera-icon-overlay" onclick="document.getElementById('imageUpload').click()">
+                        <i class="fas fa-camera"></i>
                     </div>
                 </div>
+                <div class="profile-info">
+                    <h1 class="profile-title">회원정보 수정</h1>
+                    <p class="profile-email" th:text="${user.email}">user@example.com</p>
+                </div>
+            </div>
 
-                <div class="action-buttons">
-                    <button type="button" class="btn btn-cancel" onclick="location.href='/profile'">취소</button>
+            <form id="editProfileForm" th:action="@{/edit-profile}" method="post">
+                <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                
+                <div class="form-section">
+                    <h2 class="section-title">기본 정보</h2>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">아이디</label>
+                            </div>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" th:value="${user.userId}" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">이메일</label>
+                            </div>
+                            <div class="col-md-9">
+                                <input type="email" class="form-control" th:value="${user.email}" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">닉네임</label>
+                            </div>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" name="nickname" th:value="${user.nickname}"
+                                       pattern="[가-힣a-zA-Z0-9]+" title="한글, 영문, 숫자만 입력 가능합니다" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2 class="section-title">추가 정보</h2>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label">지역</label>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <select id="province" name="province" class="form-select" required>
+                                            <option value="">시/도 선택</option>
+                                            <option value="서울특별시">서울특별시</option>
+                                            <option value="부산광역시">부산광역시</option>
+                                            <option value="대구광역시">대구광역시</option>
+                                            <option value="인천광역시">인천광역시</option>
+                                            <option value="광주광역시">광주광역시</option>
+                                            <option value="대전광역시">대전광역시</option>
+                                            <option value="울산광역시">울산광역시</option>
+                                            <option value="세종특별자치시">세종특별자치시</option>
+                                            <option value="경기도">경기도</option>
+                                            <option value="강원도">강원도</option>
+                                            <option value="충청북도">충청북도</option>
+                                            <option value="충청남도">충청남도</option>
+                                            <option value="전라북도">전라북도</option>
+                                            <option value="전라남도">전라남도</option>
+                                            <option value="경상북도">경상북도</option>
+                                            <option value="경상남도">경상남도</option>
+                                            <option value="제주특별자치도">제주특별자치도</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select id="city" name="city" class="form-select" required>
+                                            <option value="">구/군 선택</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
                     <button type="submit" class="btn btn-save">저장</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function uploadProfileImage(input) {
-            if (input.files && input.files[0]) {
-                const formData = new FormData();
-                formData.append('file', input.files[0]);
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        // 지역 데이터
+        const regionData = {
+            '서울특별시': ['강남구', '강동구', '강북구', '강서구', '관악구', '광진구', '구로구', '금천구',
+                       '노원구', '도봉구', '동대문구', '동작구', '마포구', '서대문구', '서초구', '성동구',
+                       '성북구', '송파구', '양천구', '영등포구', '용산구', '은평구', '종로구', '중구', '중랑구'],
+            '부산광역시': ['강서구', '금정구', '남구', '동구', '동래구', '부산진구', '북구', '사상구',
+                       '사하구', '서구', '수영구', '연제구', '영도구', '중구', '해운대구'],
+            '대구광역시': ['남구', '달서구', '동구', '북구', '서구', '수성구', '중구'],
+            '인천광역시': ['계양구', '남동구', '동구', '미추홀구', '부평구', '서구', '연수구', '중구'],
+            '광주광역시': ['광산구', '남구', '동구', '북구', '서구'],
+            '대전광역시': ['대덕구', '동구', '서구', '유성구', '중구'],
+            '울산광역시': ['남구', '동구', '북구', '중구', '울주군'],
+            '경기도': ['가평군', '고양시', '과천시', '광명시', '광주시', '구리시', '군포시', '김포시',
+                    '남양주시', '동두천시', '부천시', '성남시', '수원시', '시흥시', '안산시', '안성시',
+                    '안양시', '양주시', '양평군', '여주시', '연천군', '오산시', '용인시', '의왕시',
+                    '의정부시', '이천시', '파주시', '평택시', '포천시', '하남시', '화성시'],
+            '강원도': ['강릉시', '동해시', '삼척시', '속초시', '원주시', '춘천시', '태백시', '고성군', 
+                    '양구군', '양양군', '영월군', '인제군', '정선군', '철원군', '평창군', '홍천군', 
+                    '화천군', '횡성군'],
+            '충청북도': ['제천시', '청주시', '충주시', '괴산군', '단양군', '보은군', '영동군', '옥천군', 
+                     '음성군', '증평군', '진천군'],
+            '충청남도': ['계룡시', '공주시', '논산시', '당진시', '보령시', '서산시', '아산시', '천안시', 
+                     '금산군', '부여군', '서천군', '예산군', '청양군', '태안군', '홍성군'],
+            '전라북도': ['군산시', '김제시', '남원시', '익산시', '전주시', '정읍시', '고창군', '무주군', 
+                     '부안군', '순창군', '완주군', '임실군', '장수군', '진안군'],
+            '전라남도': ['광양시', '나주시', '목포시', '순천시', '여수시', '강진군', '고흥군', '곡성군', 
+                     '구례군', '담양군', '무안군', '보성군', '신안군', '영광군', '영암군', '완도군', 
+                     '장성군', '장흥군', '진도군', '함평군', '해남군', '화순군'],
+            '경상북도': ['경산시', '경주시', '구미시', '김천시', '문경시', '상주시', '안동시', '영주시', 
+                     '영천시', '포항시', '고령군', '군위군', '봉화군', '성주군', '영덕군', '영양군', 
+                     '예천군', '울릉군', '울진군', '의성군', '청도군', '청송군', '칠곡군'],
+            '경상남도': ['거제시', '김해시', '밀양시', '사천시', '양산시', '진주시', '창원시', '통영시', 
+                     '거창군', '고성군', '남해군', '산청군', '의령군', '창녕군', '하동군', '함안군', 
+                     '함양군', '합천군'],
+            '제주특별자치도': ['제주시', '서귀포시']
+        };
 
-                // 로딩 표시
-                const container = document.querySelector('.profile-image-container');
-                container.style.opacity = '0.5';
-
-                fetch('/upload-profile-image', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.querySelector('.profile-image-container');
-                    const existingImage = container.querySelector('img');
-                    const existingIcon = container.querySelector('i.bi-person');
-                    
-                    if (existingImage) {
-                        existingImage.src = data.imageUrl;
-                    } else {
-                        if (existingIcon) {
-                            existingIcon.remove();
-                        }
-                        const img = document.createElement('img');
-                        img.src = data.imageUrl;
-                        img.alt = "프로필 이미지";
-                        img.className = "profile-image";
-                        container.insertBefore(img, container.querySelector('.profile-image-upload'));
-                    }
-                    container.style.opacity = '1';
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('프로필 이미지 업로드에 실패했습니다.');
-                    container.style.opacity = '1';
-                });
+        // 현재 활성화된 페이지 표시
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === window.location.pathname) {
+                link.classList.add('active');
             }
-        }
+        });
 
-        // 프로필 수정 폼 제출
-        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(this);
-            
-            fetch('/edit-profile', {
+        // 시/도 선택 시 구/군 옵션 업데이트
+        document.getElementById('province').addEventListener('change', function() {
+            const citySelect = document.getElementById('city');
+            citySelect.innerHTML = '<option value="">구/군 선택</option>';
+
+            const cities = regionData[this.value] || [];
+            cities.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        });
+
+        // 닉네임 유효성 검사
+        document.querySelector('input[name="nickname"]').addEventListener('input', function(e) {
+            const nickname = e.target.value;
+            const pattern = /^[가-힣a-zA-Z0-9]+$/;
+            if (!pattern.test(nickname)) {
+                e.target.setCustomValidity('한글, 영문, 숫자만 입력 가능합니다');
+            } else {
+                e.target.setCustomValidity('');
+            }
+        });
+
+        // 이미지 업로드 처리
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            if (!e.target.files.length) return;
+
+            const file = e.target.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload-profile-image', {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
-                if (response.ok) {
-                    alert('프로필이 성공적으로 수정되었습니다.');
-                    window.location.href = '/profile';  // 프로필 페이지로 리다이렉트
-                } else {
-                    throw new Error('프로필 수정에 실패했습니다.');
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const profileImage = document.querySelector('.profile-image');
+                const defaultIcon = document.querySelector('.default-profile-icon');
+                
+                if (defaultIcon) {
+                    defaultIcon.remove();
+                    const img = document.createElement('img');
+                    img.src = data.imageUrl;
+                    img.alt = '프로필 이미지';
+                    img.className = 'profile-image';
+                    document.querySelector('.profile-image-container').insertBefore(img, document.querySelector('.camera-icon-overlay'));
+                } else if (profileImage) {
+                    profileImage.src = data.imageUrl;
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('프로필 수정에 실패했습니다.');
+                alert('이미지 업로드 실패: ' + error.message);
             });
+        });
+
+        // 프로필 수정 폼 제출
+        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {
+                nickname: formData.get('nickname'),
+                province: formData.get('province'),
+                city: formData.get('city')
+            };
+
+            fetch('/edit-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.text();
+            })
+            .then(() => {
+                alert('프로필이 성공적으로 수정되었습니다.');
+                window.location.reload();
+            })
+            .catch(error => {
+                alert('프로필 수정 실패: ' + error.message);
+            });
+        });
+
+        // 페이지 로드 시 현재 사용자의 지역 정보 설정
+        window.addEventListener('DOMContentLoaded', function() {
+            const userProvince = /*[[${user.province}]]*/ '';
+            const userCity = /*[[${user.city}]]*/ '';
+
+            if (userProvince) {
+                const provinceSelect = document.getElementById('province');
+                provinceSelect.value = userProvince;
+
+                // 구/군 옵션 업데이트
+                const citySelect = document.getElementById('city');
+                const cities = regionData[userProvince] || [];
+                cities.forEach(city => {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    citySelect.appendChild(option);
+                });
+
+                if (userCity) {
+                    citySelect.value = userCity;
+                }
+            }
         });
     </script>
 </body>
