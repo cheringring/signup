@@ -284,7 +284,7 @@
                 </div>
             </div>
 
-            <form id="editProfileForm" th:action="@{/edit-profile}" method="post">
+            <form id="editProfileForm" onsubmit="submitForm(event)">
                 <input type="file" id="imageUpload" accept="image/*" style="display: none;">
                 
                 <div class="form-section">
@@ -477,14 +477,13 @@
         });
 
         // 프로필 수정 폼 제출
-        document.getElementById('editProfileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const data = {
-                nickname: formData.get('nickname'),
-                province: formData.get('province'),
-                city: formData.get('city')
+        function submitForm(event) {
+            event.preventDefault();
+            
+            const formData = {
+                nickname: document.querySelector('input[name="nickname"]').value,
+                province: document.querySelector('select[name="province"]').value,
+                city: document.querySelector('select[name="city"]').value
             };
 
             fetch('/edit-profile', {
@@ -492,7 +491,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify(formData)
             })
             .then(response => {
                 if (!response.ok) {
@@ -502,12 +501,12 @@
             })
             .then(() => {
                 alert('프로필이 성공적으로 수정되었습니다.');
-                window.location.reload();
+                window.location.href = '/profile';
             })
             .catch(error => {
                 alert('프로필 수정 실패: ' + error.message);
             });
-        });
+        }
 
         // 페이지 로드 시 현재 사용자의 지역 정보 설정
         window.addEventListener('DOMContentLoaded', function() {
