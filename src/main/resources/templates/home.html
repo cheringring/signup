@@ -226,12 +226,9 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/home">홈</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/company-info">기업 정보</a>
+                    <a class="nav-link" href="/company">기업 정보</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/interview">면접 후기</a>
@@ -240,18 +237,20 @@
                     <a class="nav-link" href="/community">커뮤니티</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ms-auto">
+            <ul class="navbar-nav">
+                <!-- 로그인하지 않은 경우 -->
+                <li class="nav-item" th:if="${session.user == null}">
+                    <a class="nav-link" href="/login">로그인</a>
+                </li>
+                <li class="nav-item" th:if="${session.user == null}">
+                    <a class="nav-link" href="/signup">회원가입</a>
+                </li>
+                <!-- 로그인한 경우 -->
                 <li class="nav-item" th:if="${session.user != null}">
-                    <a class="nav-link" href="/profile">
-                        <i class="bi bi-person-circle"></i>
-                        <span th:text="${session.user.nickname}">회원정보</span>
-                    </a>
+                    <span class="nav-link" th:text="${session.user.nickname + '님'}"></span>
                 </li>
                 <li class="nav-item" th:if="${session.user != null}">
                     <a class="nav-link" href="/logout">로그아웃</a>
-                </li>
-                <li class="nav-item" th:if="${session.user == null}">
-                    <a class="nav-link" href="/login">로그인</a>
                 </li>
             </ul>
         </div>

@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+cloud:
+  aws:
+    credentials:
+      access-key: dummy
+      secret-key: dummy
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    dynamodb:
+      endpoint: http://localhost:8000
+  google:
+    project-id: test-project
+    credentials-location: classpath:test-credentials.json
+    pubsub:
+      topic: test-topic
+
+server:
+  port: 0
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.example.signup: debug

@@ -27,11 +27,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -74,20 +71,33 @@ public class UserController {
 
     @PostMapping("/login")
     public String loginUser(
-            @RequestParam String userId,
-            @RequestParam String password,
-            HttpSession session,
-            Model model,
-            RedirectAttributes redirectAttributes
+        @RequestParam String userId,
+        @RequestParam String password,
+        HttpSession session,
+        Model model
     ) {
         try {
+            // 사용자 인증
             UserEntity user = userService.authenticate(userId, password);
+            
+            // 인증 성공 시 세션에 사용자 정보 저장
             user.setPassword(null); // 보안을 위해 비밀번호 제거
             session.setAttribute("user", user);
-            redirectAttributes.addFlashAttribute("successMessage", "로그인 성공!");
+            
+            // Spring Security Context 설정
+            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+            var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+            var securityContext = new SecurityContextImpl();
+            securityContext.setAuthentication(authentication);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
+            SecurityContextHolder.setContext(securityContext);
+            
+            // 홈페이지로 리디렉션
             return "redirect:/home";
-        } catch (UserAlreadyExistsException e) {
-            model.addAttribute("error", "로그인에 실패하셨습니다. 아이디와 비밀번호를 확인해주세요.");
+            
+        } catch (Exception e) {
+            // 로그인 실패 시 에러 메시지 표시
+            model.addAttribute("error", "아이디 또는 비밀번호가 일치하지 않습니다.");
             return "login_form";
         }
     }
@@ -110,8 +120,13 @@ public class UserController {
         }
 
         try {
-            userService.registerNewUser(form);
-            return "redirect:/login";
+            UserEntity savedUser = userService.registerNewUser(form);
+            if (savedUser != null && savedUser.getUserId() != null) {
+                return "redirect:/login?registrationSuccess=true";
+            } else {
+                model.addAttribute("error", "회원가입 처리 중 오류가 발생했습니다.");
+                return "signup_form";
+            }
         } catch (UserAlreadyExistsException e) {
             bindingResult.rejectValue("userId", "userIdDuplicate", e.getMessage());
             return "signup_form";
