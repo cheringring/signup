@@ -30,6 +30,17 @@ spring:
               - email
               - profile
 
+naver:
+  api:
+    client-id: WteM7gNGfkJM9lP0SWpl
+    client-secret: knW6aJgVW8
+    redirect-uri: http://localhost:8080/login/naver/callback
+    scope:
+      - name
+      - email
+      - profile_image
+
+
 cloud:
   aws:
     credentials:
@@ -80,13 +91,6 @@ thymeleaf:
   mode: HTML
   cache: false
 
-
-# 네이버 API 설정
-naver:
-  api:
-    client-id: WteM7gNGfkJM9lP0SWpl
-    client-secret: knW6aJgVW8
-    redirect-uri: http://localhost:8080/login/naver/callback
 
 # 로깅 설정
 logging:

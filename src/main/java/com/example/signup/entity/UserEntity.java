@@ -1,6 +1,7 @@
 package com.example.signup.entity;
 
 import com.example.signup.entity.enum_.Gender;
+import com.example.signup.entity.enum_.AuthProvider;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -47,6 +48,13 @@ public class UserEntity {
     @Column
     private String profileImage;
 
+    @Column
+    private String naverUserId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuthProvider provider;  // LOCAL, NAVER, GOOGLE 등 로그인 방식
+
     public String getProfileImage() {
         return profileImage;
     }
@@ -57,6 +65,12 @@ public class UserEntity {
 
     @PreUpdate
     protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 }

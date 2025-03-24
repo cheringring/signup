@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -80,6 +80,41 @@
             height: 3px;
             background-color: var(--primary-color);
             border-radius: 3px 3px 0 0;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: var(--box-shadow);
+            border-radius: var(--border-radius);
+            padding: 0.5rem 0;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1.5rem;
+            color: var(--text-color);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .dropdown-divider {
+            margin: 0.3rem 0;
+            opacity: 0.1;
+        }
+
+        .nav-link.dropdown-toggle {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            color: var(--primary-color) !important;
+        }
+
+        .nav-link.dropdown-toggle:after {
+            margin-left: 0.5rem;
         }
 
         .hero-section {
@@ -239,18 +274,22 @@
             </ul>
             <ul class="navbar-nav">
                 <!-- 로그인하지 않은 경우 -->
-                <li class="nav-item" th:if="${session.user == null}">
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
                     <a class="nav-link" href="/login">로그인</a>
                 </li>
-                <li class="nav-item" th:if="${session.user == null}">
+                <li class="nav-item" sec:authorize="!isAuthenticated()">
                     <a class="nav-link" href="/signup">회원가입</a>
                 </li>
                 <!-- 로그인한 경우 -->
-                <li class="nav-item" th:if="${session.user != null}">
-                    <span class="nav-link" th:text="${session.user.nickname + '님'}"></span>
-                </li>
-                <li class="nav-item" th:if="${session.user != null}">
-                    <a class="nav-link" href="/logout">로그아웃</a>
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span th:text="${#authentication.principal.username}">사용자님</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="/profile">회원정보</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="/logout">로그아웃</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>

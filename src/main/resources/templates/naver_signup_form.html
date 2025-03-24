@@ -292,7 +292,7 @@ function checkNickname() {
         method: 'GET',
         data: { nickname: nickname },
         success: function(response) {
-            if (response === true) {
+            if (!response.exists) {
                 $('#nicknameStatus').text('사용 가능한 닉네임입니다.').removeClass('error').addClass('success');
                 isNicknameChecked = true;
             } else {

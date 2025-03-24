@@ -2,6 +2,7 @@ package com.example.signup.service;
 
 import com.example.signup.entity.UserEntity;
 import com.example.signup.entity.enum_.Gender;
+import com.example.signup.entity.enum_.AuthProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -115,6 +116,7 @@ public class NaverApiService {
             .province("미설정")
             .city("미설정")
             .gender(gender)
+            .provider(AuthProvider.NAVER)
             .createdAt(LocalDateTime.now())
             .updatedAt(LocalDateTime.now())
             .build();

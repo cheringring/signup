@@ -3,52 +3,41 @@ package com.example.signup.controller;
 import com.example.signup.Form.UserCreateForm;
 import com.example.signup.entity.UserEntity;
 import com.example.signup.entity.enum_.Gender;
+import com.example.signup.entity.enum_.AuthProvider;
 import com.example.signup.exception.UserAlreadyExistsException;
 import com.example.signup.service.NaverApiService;
 import com.example.signup.service.UserService;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.util.StringUtils;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-import java.time.LocalDateTime;
+
+import static java.util.Map.of;
 
 @Controller
 @RequiredArgsConstructor
@@ -65,41 +54,11 @@ public class UserController {
     private String redirectURI;
 
     @GetMapping("/login")
-    public String showLoginForm() {
-        return "login_form";
-    }
-
-    @PostMapping("/login")
-    public String loginUser(
-        @RequestParam String userId,
-        @RequestParam String password,
-        HttpSession session,
-        Model model
-    ) {
-        try {
-            // 사용자 인증
-            UserEntity user = userService.authenticate(userId, password);
-            
-            // 인증 성공 시 세션에 사용자 정보 저장
-            user.setPassword(null); // 보안을 위해 비밀번호 제거
-            session.setAttribute("user", user);
-            
-            // Spring Security Context 설정
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
-            var securityContext = new SecurityContextImpl();
-            securityContext.setAuthentication(authentication);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-            SecurityContextHolder.setContext(securityContext);
-            
-            // 홈페이지로 리디렉션
-            return "redirect:/home";
-            
-        } catch (Exception e) {
-            // 로그인 실패 시 에러 메시지 표시
+    public String showLoginForm(@RequestParam(required = false) Boolean error, Model model) {
+        if (Boolean.TRUE.equals(error)) {
             model.addAttribute("error", "아이디 또는 비밀번호가 일치하지 않습니다.");
-            return "login_form";
         }
+        return "login_form";
     }
 
     @GetMapping("/signup")
@@ -109,7 +68,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signup(@Valid UserCreateForm form, BindingResult bindingResult, Model model) {
+    public String signup(@Valid UserCreateForm form, BindingResult bindingResult, Model model, HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "signup_form";
         }
@@ -122,7 +81,19 @@ public class UserController {
         try {
             UserEntity savedUser = userService.registerNewUser(form);
             if (savedUser != null && savedUser.getUserId() != null) {
-                return "redirect:/login?registrationSuccess=true";
+                // 회원가입 성공 후 자동 로그인 처리
+                savedUser.setPassword(null); // 보안을 위해 비밀번호 제거
+                session.setAttribute("user", savedUser);
+                logger.info("User saved in session after signup - ID: {}, Nickname: {}", savedUser.getUserId(), savedUser.getNickname());
+
+                // Spring Security Context 설정
+                var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+                var authentication = new UsernamePasswordAuthenticationToken(savedUser, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+                logger.info("Security context saved in session");
+
+                return "redirect:/home";
             } else {
                 model.addAttribute("error", "회원가입 처리 중 오류가 발생했습니다.");
                 return "signup_form";
@@ -144,44 +115,62 @@ public class UserController {
     @GetMapping("/login/naver/callback")
     public String naverCallback(@RequestParam String code, @RequestParam String state, Model model, HttpSession session) {
         try {
+            logger.info("===== Naver callback processing =====");
             logger.info("Naver callback received - code: {}, state: {}", code, state);
-
+    
             UserEntity naverUser = naverApiService.getUserInfo(code, state);
-            logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}",
-                    naverUser.getUserId(), naverUser.getUserName(), naverUser.getEmail());
-
+            logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}, Provider: {}", 
+                    naverUser.getUserId(), naverUser.getUserName(), naverUser.getEmail(), 
+                    naverUser.getProvider() != null ? naverUser.getProvider() : "null");
+    
             // 데이터베이스에서 사용자 조회
             boolean userExists = userService.existsByUserId(naverUser.getUserId());
             logger.info("User exists in database: {}", userExists);
-
+    
             if (!userExists) {
                 // 새로운 사용자인 경우 회원가입 페이지로 이동
+                UserEntity userForm = new UserEntity();  // 새로운 객체 생성
+                userForm.setUserId(naverUser.getUserId());
+                userForm.setEmail(naverUser.getEmail());
+                userForm.setUserName(naverUser.getUserName());
+                userForm.setProvider(AuthProvider.NAVER);
+        
                 session.setAttribute("tempNaverUser", naverUser);
+                model.addAttribute("userForm", userForm);  // userForm 객체를 따로 생성하여 전달
                 return "naver_signup_form";
             }
-
+    
             // 기존 사용자인 경우 로그인 처리
             logger.info("Existing user found. Processing login...");
-            UserEntity existingUser = userService.getUserByUserId(naverUser.getUserId());
-
-            // 세션에 사용자 정보 저장
-            existingUser.setPassword(null); // 보안을 위해 비밀번호 제거
-            session.setAttribute("user", existingUser);
-            model.addAttribute("user", existingUser);  // Model에도 user 객체 추가
-
+            
+            // 데이터베이스에서 사용자 정보 가져오기
+            UserEntity user = userService.getUserByUserId(naverUser.getUserId());
+            logger.info("User loaded from database - ID: {}, Nickname: {}, Provider: {}", 
+                    user.getUserId(), user.getNickname(), user.getProvider());
+            
+            // UserDetailsService를 통해 사용자 정보 로드
+            UserDetails userDetails = userService.loadUserByUsername(naverUser.getUserId());
+            logger.info("UserDetails loaded - Username: {}, Authorities: {}", 
+                    userDetails.getUsername(), userDetails.getAuthorities());
+            
             // Spring Security Context 설정
-            var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-            var authentication = new UsernamePasswordAuthenticationToken(existingUser, null, authorities);
-            var securityContext = new SecurityContextImpl();
-            securityContext.setAuthentication(authentication);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, securityContext);
-            SecurityContextHolder.setContext(securityContext);
-
-            return "naver_login_success";
-
+            UsernamePasswordAuthenticationToken authentication = 
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            logger.info("Security context set for user: {}", naverUser.getUserId());
+            
+            // 인증 상태 확인
+            Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
+            logger.info("Current authentication: {}, Principal: {}, Authenticated: {}", 
+                    currentAuth != null ? currentAuth.getClass().getSimpleName() : "null",
+                    currentAuth != null ? currentAuth.getPrincipal() : "null",
+                    currentAuth != null ? currentAuth.isAuthenticated() : "false");
+            
+            return "redirect:/home";
         } catch (Exception e) {
             logger.error("Error during Naver callback processing", e);
-            model.addAttribute("error", "네이버 로그인 처리 중 오류가 발생했습니다: " + e.getMessage());
+            model.addAttribute("error", "네이버 로그인 처리 중 오류가 발생했습니다.");
             return "login_form";
         }
     }
@@ -189,26 +178,30 @@ public class UserController {
     @GetMapping("/naver-success")
     public String naverLoginSuccess(Model model, HttpSession session) {
         logger.info("===== Naver Login Success =====");
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        logger.info("User in session: {}", user != null ? user.getUserId() : "null");
-
-        if (user == null) {
-            logger.info("No user in session, redirecting to login");
+        
+        // 현재 인증된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || 
+            authentication instanceof AnonymousAuthenticationToken) {
+            logger.info("No authenticated user, redirecting to login");
             return "redirect:/login";
         }
-
+        
+        String userId = authentication.getName();
+        logger.info("Authenticated user: {}", userId);
+        
         // 실제로 DB에 사용자가 있는지 한 번 더 확인
-        boolean userExists = userService.existsByUserId(user.getUserId());
+        boolean userExists = userService.existsByUserId(userId);
         logger.info("User exists in database: {}", userExists);
 
         if (!userExists) {
             logger.info("User not found in database, redirecting to signup");
+            SecurityContextHolder.clearContext();
             session.invalidate();
             return "redirect:/login";
         }
-
-        model.addAttribute("user", user);
-        return "naver_login_success";
+        
+        return "redirect:/home";
     }
 
     @GetMapping("/social/signup")
@@ -242,6 +235,7 @@ public class UserController {
             tempUser.setProvince(userForm.getProvince());
             tempUser.setCity(userForm.getCity());
             tempUser.setGender(userForm.getGender());
+            tempUser.setProvider(AuthProvider.NAVER);  // provider 설정
 
             // 사용자 저장
             UserEntity savedUser = userService.saveNaverUser(tempUser);
@@ -250,16 +244,18 @@ public class UserController {
             // 세션 업데이트
             session.removeAttribute("tempNaverUser");
             session.setAttribute("user", savedUser);
-
+            logger.info("User saved in session - ID: {}, Nickname: {}", savedUser.getUserId(), savedUser.getNickname());
+            
             // Spring Security 인증 처리
             List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(savedUser.getUserId(), null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
-                    SecurityContextHolder.getContext());
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+            logger.info("Security context saved in session");
 
             return "redirect:/home";
+
         } catch (Exception e) {
             logger.error("Error during social signup completion", e);
             return "redirect:/login";
@@ -281,11 +277,20 @@ public class UserController {
         return "community";
     }
 
+
     @GetMapping("/home")
-    public String home(Model model, HttpSession session) {
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user != null) {
-            model.addAttribute("user", user);
+    public String home(Model model) {
+        // 현재 인증된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication != null && authentication.isAuthenticated() && 
+            !(authentication instanceof AnonymousAuthenticationToken)) {
+            String userId = authentication.getName();
+            UserEntity user = userService.getUserByUserId(userId);
+            if (user != null) {
+                logger.info("Authenticated user found - ID: {}, Nickname: {}", user.getUserId(), user.getNickname());
+                model.addAttribute("user", user);
+            }
         }
         return "home";
     }
@@ -328,21 +333,31 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String showProfile(Model model, HttpSession session) {
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
+    public String showUserProfile(Model model, HttpSession session) {
+        // 현재 인증된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || 
+            authentication instanceof AnonymousAuthenticationToken) {
             return "redirect:/login";
         }
+        
+        String userId = authentication.getName();
+        UserEntity user = userService.getUserByUserId(userId);
         model.addAttribute("user", user);
         return "userProfile";
     }
 
     @GetMapping("/edit-profile")
     public String showEditProfile(Model model, HttpSession session) {
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
+        // 현재 인증된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || 
+            authentication instanceof AnonymousAuthenticationToken) {
             return "redirect:/login";
         }
+        
+        String userId = authentication.getName();
+        UserEntity user = userService.getUserByUserId(userId);
         model.addAttribute("user", user);
         return "editProfile";
     }
@@ -351,10 +366,15 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> editProfile(@RequestBody Map<String, String> updates, HttpSession session) {
         try {
-            UserEntity currentUser = (UserEntity) session.getAttribute("user");
-            if (currentUser == null) {
+            // 현재 인증된 사용자 정보 가져오기
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated() || 
+                authentication instanceof AnonymousAuthenticationToken) {
                 return ResponseEntity.status(401).body("로그인이 필요합니다.");
             }
+            
+            String userId = authentication.getName();
+            UserEntity currentUser = userService.getUserByUserId(userId);
 
             // 닉네임 유효성 검사
             String nickname = updates.get("nickname");
@@ -377,12 +397,8 @@ public class UserController {
             // 사용자 정보 업데이트
             UserEntity savedUser = userService.updateUser(currentUser);
             
-            // 세션 업데이트
-            savedUser.setPassword(null); // 보안을 위해 비밀번호 제거
-            session.setAttribute("user", savedUser);
-            
-            return ResponseEntity.ok().build();
-            
+            return ResponseEntity.ok(Map.of("success", true, "message", "프로필이 성공적으로 업데이트되었습니다."));
+
         } catch (Exception e) {
             return ResponseEntity.status(500).body("프로필 수정에 실패했습니다: " + e.getMessage());
         }
@@ -392,10 +408,15 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<?> uploadProfileImage(@RequestParam("file") MultipartFile file, HttpSession session) {
         try {
-            UserEntity user = (UserEntity) session.getAttribute("user");
-            if (user == null) {
+            // 현재 인증된 사용자 정보 가져오기
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated() || 
+                authentication instanceof AnonymousAuthenticationToken) {
                 return ResponseEntity.status(401).body("로그인이 필요합니다.");
             }
+            
+            String userId = authentication.getName();
+            UserEntity user = userService.getUserByUserId(userId);
 
             // 파일 유효성 검사
             if (file.isEmpty()) {
@@ -436,7 +457,7 @@ public class UserController {
             user.setProfileImage("/uploads/profile-images/" + fileName);
             userService.updateUser(user);
 
-            return ResponseEntity.ok().body(Map.of(
+            return ResponseEntity.ok().body(of(
                 "imageUrl", user.getProfileImage()
             ));
 
@@ -447,13 +468,19 @@ public class UserController {
 
     @PostMapping("/delete-account")
     public String deleteAccount(HttpSession session) {
-        UserEntity user = (UserEntity) session.getAttribute("user");
-        if (user == null) {
+        // 현재 인증된 사용자 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || 
+            authentication instanceof AnonymousAuthenticationToken) {
             return "redirect:/login";
         }
-
-        userService.deleteUser(user.getUserId());
-        session.invalidate();
+        
+        String userId = authentication.getName();
+        UserEntity user = userService.getUserByUserId(userId);
+        if (user != null) {
+            userService.deleteUser(user.getUserId());
+            session.invalidate();
+        }
         return "redirect:/login";
     }
 }
