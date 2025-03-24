@@ -283,7 +283,7 @@
                 <!-- 로그인한 경우 -->
                 <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span th:text="${#authentication.principal.username}">사용자님</span>
+                        <span th:text="${user.nickname}">사용자님</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="/profile">회원정보</a></li>

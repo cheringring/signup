@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -112,22 +111,21 @@ public class UserController {
         logger.info("Redirecting to Naver Authorization URL: {}", authorizationUrl);
         return "redirect:" + authorizationUrl;
     }
-
     @GetMapping("/login/naver/callback")
     public String naverCallback(@RequestParam String code, @RequestParam String state, Model model, HttpSession session) {
         try {
             logger.info("===== Naver callback processing =====");
             logger.info("Naver callback received - code: {}, state: {}", code, state);
-    
+
             UserEntity naverUser = naverApiService.getUserInfo(code, state);
-            logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}, Provider: {}", 
-                    naverUser.getUserId(), naverUser.getUserName(), naverUser.getEmail(), 
+            logger.info("Retrieved user info - ID: {}, Name: {}, Email: {}, Provider: {}",
+                    naverUser.getUserId(), naverUser.getUserName(), naverUser.getEmail(),
                     naverUser.getProvider() != null ? naverUser.getProvider() : "null");
-    
+
             // 데이터베이스에서 사용자 조회
             boolean userExists = userService.existsByUserId(naverUser.getUserId());
             logger.info("User exists in database: {}", userExists);
-    
+
             if (!userExists) {
                 // 새로운 사용자인 경우 회원가입 페이지로 이동
                 UserEntity userForm = new UserEntity();  // 새로운 객체 생성
@@ -135,50 +133,50 @@ public class UserController {
                 userForm.setEmail(naverUser.getEmail());
                 userForm.setUserName(naverUser.getUserName());
                 userForm.setProvider(AuthProvider.NAVER);
-        
+
                 session.setAttribute("tempNaverUser", naverUser);
                 model.addAttribute("userForm", userForm);  // userForm 객체를 따로 생성하여 전달
                 return "naver_signup_form";
             }
-    
+
             // 기존 사용자인 경우 로그인 처리
             logger.info("Existing user found. Processing login...");
-            
+
             // 데이터베이스에서 사용자 정보 가져오기
             UserEntity user = userService.getUserByUserId(naverUser.getUserId());
             if (user == null) {
                 logger.error("User not found in database despite existsByUserId returning true");
                 return "redirect:/login";
             }
-            logger.info("User loaded from database - ID: {}, Nickname: {}, Provider: {}", 
+            logger.info("User loaded from database - ID: {}, Nickname: {}, Provider: {}",
                     user.getUserId(), user.getNickname(), user.getProvider());
-            
+
             // UserDetails 객체 생성
-            UserDetails userDetails = User.builder()
-                .username(user.getUserId())
-                .password("") // 네이버 로그인은 비밀번호가 필요없음
-                .authorities("ROLE_USER")
-                .build();
-            
+            UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+                    .username(user.getUserId())
+                    .password("") // 네이버 로그인은 비밀번호가 필요없음
+                    .authorities("ROLE_USER")
+                    .build();
+
             // Spring Security Context 설정
-            UsernamePasswordAuthenticationToken authentication = 
+            UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(user);
-            
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
             logger.info("Security context set for user: {}", user.getUserId());
-            
+
             // 인증 상태 확인
             Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
-            logger.info("Current authentication: {}, Principal: {}, Authenticated: {}", 
+            logger.info("Current authentication: {}, Principal: {}, Authenticated: {}",
                     currentAuth != null ? currentAuth.getClass().getSimpleName() : "null",
                     currentAuth != null ? currentAuth.getPrincipal() : "null",
                     currentAuth != null ? currentAuth.isAuthenticated() : "false");
-            
+
             // 세션에 사용자 정보 저장
             session.setAttribute("user", user);
             model.addAttribute("user", user);
-            
+
             return "redirect:/home";
         } catch (Exception e) {
             logger.error("Error during Naver callback processing", e);
