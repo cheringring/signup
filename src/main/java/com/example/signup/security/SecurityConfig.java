@@ -18,11 +18,14 @@ import org.slf4j.LoggerFactory;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     private final UserDetailsService userDetailsService;
+
     @Autowired
     public SecurityConfig(@Lazy UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -35,14 +38,14 @@ public class SecurityConfig {
                     "/login-form", "/naver-login-success",
                     "/naver-signup-form", "/signup-form", "/signup-success",
                     "/social-signup", "/user-profile", "/api/**",
-                    "/profile", "/edit-profile", "/upload-profile-image"
+                    "/profile", "/edit-profile", "/upload-profile-image",
+                    "/home"
                 ).permitAll()
-                .requestMatchers("/home").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-    .loginPage("/login")
-    .loginProcessingUrl("/login")
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
                 .usernameParameter("userId")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/home", true)
@@ -52,7 +55,14 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/login")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
                 .permitAll()
+            )
+            .sessionManagement(session -> session
+                .sessionFixation().newSession()
+                .maximumSessions(1)
+                .expiredUrl("/login")
             );
 
         return http.build();

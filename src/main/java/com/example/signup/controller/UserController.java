@@ -145,20 +145,21 @@ public class UserController {
             
             // 데이터베이스에서 사용자 정보 가져오기
             UserEntity user = userService.getUserByUserId(naverUser.getUserId());
+            if (user == null) {
+                logger.error("User not found in database despite existsByUserId returning true");
+                return "redirect:/login";
+            }
             logger.info("User loaded from database - ID: {}, Nickname: {}, Provider: {}", 
                     user.getUserId(), user.getNickname(), user.getProvider());
             
-            // UserDetailsService를 통해 사용자 정보 로드
-            UserDetails userDetails = userService.loadUserByUsername(naverUser.getUserId());
-            logger.info("UserDetails loaded - Username: {}, Authorities: {}", 
-                    userDetails.getUsername(), userDetails.getAuthorities());
-            
             // Spring Security Context 설정
+            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             UsernamePasswordAuthenticationToken authentication = 
-                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    new UsernamePasswordAuthenticationToken(user, null, authorities);
+            authentication.setDetails(user);
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            logger.info("Security context set for user: {}", naverUser.getUserId());
+            logger.info("Security context set for user: {}", user.getUserId());
             
             // 인증 상태 확인
             Authentication currentAuth = SecurityContextHolder.getContext().getAuthentication();
