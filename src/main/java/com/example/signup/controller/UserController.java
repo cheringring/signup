@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -152,10 +153,16 @@ public class UserController {
             logger.info("User loaded from database - ID: {}, Nickname: {}, Provider: {}", 
                     user.getUserId(), user.getNickname(), user.getProvider());
             
+            // UserDetails 객체 생성
+            UserDetails userDetails = User.builder()
+                .username(user.getUserId())
+                .password("") // 네이버 로그인은 비밀번호가 필요없음
+                .authorities("ROLE_USER")
+                .build();
+            
             // Spring Security Context 설정
-            List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
             UsernamePasswordAuthenticationToken authentication = 
-                    new UsernamePasswordAuthenticationToken(user, null, authorities);
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authentication.setDetails(user);
             
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -167,6 +174,10 @@ public class UserController {
                     currentAuth != null ? currentAuth.getClass().getSimpleName() : "null",
                     currentAuth != null ? currentAuth.getPrincipal() : "null",
                     currentAuth != null ? currentAuth.isAuthenticated() : "false");
+            
+            // 세션에 사용자 정보 저장
+            session.setAttribute("user", user);
+            model.addAttribute("user", user);
             
             return "redirect:/home";
         } catch (Exception e) {
@@ -283,14 +294,31 @@ public class UserController {
     public String home(Model model) {
         // 현재 인증된 사용자 정보 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        logger.info("Home page accessed - Authentication: {}", authentication);
         
         if (authentication != null && authentication.isAuthenticated() && 
             !(authentication instanceof AnonymousAuthenticationToken)) {
-            String userId = authentication.getName();
-            UserEntity user = userService.getUserByUserId(userId);
+            
+            Object principal = authentication.getPrincipal();
+            logger.info("Principal type: {}", principal.getClass().getName());
+            
+            UserEntity user;
+            if (principal instanceof UserEntity) {
+                // 네이버 로그인의 경우
+                user = (UserEntity) principal;
+                logger.info("User info from principal - ID: {}, Nickname: {}", user.getUserId(), user.getNickname());
+            } else {
+                // 일반 로그인의 경우
+                String userId = authentication.getName();
+                user = userService.getUserByUserId(userId);
+                logger.info("User info from database - ID: {}, Nickname: {}", 
+                    user != null ? user.getUserId() : "null", 
+                    user != null ? user.getNickname() : "null");
+            }
+            
             if (user != null) {
-                logger.info("Authenticated user found - ID: {}, Nickname: {}", user.getUserId(), user.getNickname());
                 model.addAttribute("user", user);
+                model.addAttribute("isAuthenticated", true);
             }
         }
         return "home";
